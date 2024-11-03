@@ -45,6 +45,7 @@ namespace EventGoAPI.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -55,8 +56,7 @@ namespace EventGoAPI.Persistence.Migrations
                     Latitude = table.Column<double>(type: "float", nullable: false),
                     Longitude = table.Column<double>(type: "float", nullable: false),
                     Category = table.Column<int>(type: "int", nullable: false),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,7 +66,7 @@ namespace EventGoAPI.Persistence.Migrations
                         column: x => x.CreatedById,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -107,7 +107,7 @@ namespace EventGoAPI.Persistence.Migrations
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Messages_Users_SenderId",
                         column: x => x.SenderId,
@@ -131,7 +131,7 @@ namespace EventGoAPI.Persistence.Migrations
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Participants_Users_UserId",
                         column: x => x.UserId,

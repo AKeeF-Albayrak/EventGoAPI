@@ -17,6 +17,5 @@ namespace EventGoAPI.Domain.Entities
 
         public User Sender { get; set; }
         public Event Event { get; set; }
-        public ICollection<MessageReadStatus> ReadStatuses { get; set; }
     }
 }

@@ -15,7 +15,11 @@ namespace EventGoAPI.Domain.Entities
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public string Email { get; set; }
-        public Location Location { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string Country { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
         public ICollection<EventCategory> Interests { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
@@ -30,5 +34,6 @@ namespace EventGoAPI.Domain.Entities
         public ICollection<Point> Points { get; set; }
         public ICollection<Event> Events { get; set; }
         public ICollection<Message> Messages { get; set; }
+        public ICollection<Participant> Participants { get; set; }
     }
 }

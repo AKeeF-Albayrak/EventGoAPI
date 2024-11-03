@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventGoAPI.Persistence.Migrations
 {
     [DbContext(typeof(EventGoDbContext))]
-    [Migration("20241103161629_mig_1")]
+    [Migration("20241103162939_mig_1")]
     partial class mig_1
     {
         /// <inheritdoc />
@@ -89,9 +89,6 @@ namespace EventGoAPI.Persistence.Migrations
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("EventId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("SenderId")
                         .HasColumnType("uniqueidentifier");
 
@@ -105,8 +102,6 @@ namespace EventGoAPI.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
-
-                    b.HasIndex("EventId1");
 
                     b.HasIndex("SenderId");
 
@@ -240,14 +235,10 @@ namespace EventGoAPI.Persistence.Migrations
             modelBuilder.Entity("EventGoAPI.Domain.Entities.Message", b =>
                 {
                     b.HasOne("EventGoAPI.Domain.Entities.Event", "Event")
-                        .WithMany()
+                        .WithMany("Messages")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("EventGoAPI.Domain.Entities.Event", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("EventId1");
 
                     b.HasOne("EventGoAPI.Domain.Entities.User", "Sender")
                         .WithMany("Messages")

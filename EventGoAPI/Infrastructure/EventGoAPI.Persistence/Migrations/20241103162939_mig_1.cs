@@ -97,8 +97,7 @@ namespace EventGoAPI.Persistence.Migrations
                     SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SendingTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EventId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    SendingTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -109,11 +108,6 @@ namespace EventGoAPI.Persistence.Migrations
                         principalTable: "Events",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Messages_Events_EventId1",
-                        column: x => x.EventId1,
-                        principalTable: "Events",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Messages_Users_SenderId",
                         column: x => x.SenderId,
@@ -155,11 +149,6 @@ namespace EventGoAPI.Persistence.Migrations
                 name: "IX_Messages_EventId",
                 table: "Messages",
                 column: "EventId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Messages_EventId1",
-                table: "Messages",
-                column: "EventId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_SenderId",

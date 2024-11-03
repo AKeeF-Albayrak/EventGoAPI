@@ -44,7 +44,7 @@ namespace EventGoAPI.Persistence.Context
 
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Event)
-                .WithMany()
+                .WithMany(e => e.Messages)
                 .HasForeignKey(m => m.EventId)
                 .OnDelete(DeleteBehavior.Restrict);
         }

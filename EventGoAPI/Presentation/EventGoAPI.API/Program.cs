@@ -1,8 +1,11 @@
+using EventGoAPI.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 //Test
 builder.Services.AddControllers();
+builder.Services.AddPersistenceServices();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

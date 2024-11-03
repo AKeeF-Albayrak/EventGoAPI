@@ -1,17 +1,14 @@
-﻿using EventGoAPI.Domain.Entities.Common;
-using EventGoAPI.Domain.Enums;
+﻿using EventGoAPI.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventGoAPI.Domain.Entities
+namespace EventGoAPI.Application.Dtos.AuthDtos
 {
-    public class User : BaseEntity
+    public class SignUpDto
     {
-        public Guid Id { get; set; }
-        public UserRole Role { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public string Email { get; set; }
@@ -27,11 +24,5 @@ namespace EventGoAPI.Domain.Entities
         public bool Gender { get; set; }
         public string PhoneNumber { get; set; }
         public byte[] Image { get; set; }
-        public DateTime CreatedTime { get; set; }
-
-        public ICollection<Point> Points { get; set; }
-        public ICollection<Event> Events { get; set; }
-        public ICollection<Message> Messages { get; set; }
-        public ICollection<Participant> Participants { get; set; }
     }
 }

@@ -23,6 +23,7 @@ namespace EventGoAPI.Domain.Entities
         public double Longitude { get; set; }
         public EventCategory Category { get; set; }
         public byte[] Image { get; set; }
+        public DateTime CreatedTime { get; set; }
         public User CreatedBy { get; set; }
         public ICollection<Message> Messages { get; set; }
         public ICollection<Participant> Participants { get; set; }

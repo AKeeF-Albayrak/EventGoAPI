@@ -16,11 +16,13 @@ namespace EventGoAPI.API.Controllers
         private readonly IUserReadRepository _userReadRepository;
         private readonly IUserWriteRepository _userWriteRepository;
         private readonly IPasswordHasher _passwordHasher;
-        public AuthController(IUserReadRepository userReadRepository, IUserWriteRepository userWriteRepository, IPasswordHasher passwordHasher)
+        private readonly ITokenService _tokenService;
+        public AuthController(IUserReadRepository userReadRepository, IUserWriteRepository userWriteRepository, IPasswordHasher passwordHasher, ITokenService tokenService)
         {
             _userWriteRepository = userWriteRepository;
             _userReadRepository = userReadRepository;
-            _passwordHasher = passwordHasher;  
+            _passwordHasher = passwordHasher;
+            _tokenService = tokenService;
         }
 
         [HttpPost]
@@ -35,7 +37,8 @@ namespace EventGoAPI.API.Controllers
 
                 if (isPasswordValid)
                 {
-                    return Ok("Login successful");
+                    var token = _tokenService.GenerateToken(user);
+                    return Ok(new { Token = token, Message = "Login successful" });
                 }
                 else
                 {

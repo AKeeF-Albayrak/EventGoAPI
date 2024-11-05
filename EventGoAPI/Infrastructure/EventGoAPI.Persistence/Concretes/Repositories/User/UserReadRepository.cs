@@ -9,8 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Persistence.Concretes.Repositories;
 
-namespace EventGoAPI.Persistence.Repositories
+namespace EventGoAPI.Persistence.Concretes.Repositories.User
 {
     public class UserReadRepository : ReadRepository<User>, IUserReadRepository
     {

@@ -1,5 +1,6 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Domain.Entities;
+using EventGoAPI.Persistence.Concretes.Repositories;
 using EventGoAPI.Persistence.Context;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventGoAPI.Persistence.Repositories
+namespace EventGoAPI.Persistence.Concretes.Repositories.Event
 {
     public class EventWriteRepository : WriteRepository<Event>, IEventWriteRepository
     {

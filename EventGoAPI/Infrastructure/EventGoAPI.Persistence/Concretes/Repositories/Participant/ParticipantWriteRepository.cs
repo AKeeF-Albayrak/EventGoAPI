@@ -1,5 +1,6 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Domain.Entities;
+using EventGoAPI.Persistence.Concretes.Repositories;
 using EventGoAPI.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,13 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventGoAPI.Persistence.Repositories
+namespace EventGoAPI.Persistence.Concretes.Repositories.Participant
 {
-    public class ParticipantReadRepository : ReadRepository<Participant>, IParticipantReadRepository
+    public class ParticipantWriteRepository : WriteRepository<Participant>, IParticipantWriteRepository
     {
         private readonly EventGoDbContext _context;
 
-        public ParticipantReadRepository(EventGoDbContext context) : base(context)
+        public ParticipantWriteRepository(EventGoDbContext context) : base(context)
         {
             _context = context;
         }

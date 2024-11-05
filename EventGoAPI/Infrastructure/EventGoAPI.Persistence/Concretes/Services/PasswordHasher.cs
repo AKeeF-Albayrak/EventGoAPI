@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventGoAPI.Persistence.Repositories
+namespace EventGoAPI.Persistence.Concretes.Services
 {
     public class PasswordHasher : IPasswordHasher
     {

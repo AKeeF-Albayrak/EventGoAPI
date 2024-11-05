@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventGoAPI.Persistence.Repositories
+namespace EventGoAPI.Persistence.Concretes.Repositories
 {
     public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
     {

@@ -1,7 +1,10 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
+using EventGoAPI.Persistence.Concretes.Repositories.Event;
+using EventGoAPI.Persistence.Concretes.Repositories.Participant;
+using EventGoAPI.Persistence.Concretes.Repositories.User;
+using EventGoAPI.Persistence.Concretes.Services;
 using EventGoAPI.Persistence.Context;
-using EventGoAPI.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +37,7 @@ namespace EventGoAPI.Persistence
             services.AddScoped<IParticipantWriteRepository, ParticipantWriteRepository>();
 
             services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<ITokenService, TokenService>();
 
         }
     }

@@ -2,9 +2,11 @@
 using EventGoAPI.Application.Dtos.EventDtos;
 using EventGoAPI.Domain.Entities;
 using EventGoAPI.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace EventGoAPI.API.Controllers
 {
@@ -24,10 +26,17 @@ namespace EventGoAPI.API.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddEvent([FromBody] EventAddDto dto)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(userIdClaim, out Guid createdById))
+            {
+                return BadRequest("Invalid user ID format.");
+            }
+
             Guid id = Guid.NewGuid();
-            Guid createdById = Guid.Parse("72AF2F9FC4D8420A8CBB800A47133318");
+
             Event _event = new Event
             {
                 Id = id,
@@ -42,7 +51,6 @@ namespace EventGoAPI.API.Controllers
                 Latitude = dto.Latitude,
                 Longitude = dto.Longitude,
                 Category = dto.Category,
-                //Image = dto.Image,
                 CreatedTime = DateTime.Now,
                 isApproved = false,
             };
@@ -58,22 +66,49 @@ namespace EventGoAPI.API.Controllers
 
             await _participantWriteRepository.AddAsync(_participant);
             await _participantWriteRepository.SaveChangesAsync();
-            
 
             _event.Participants = new List<Participant> { _participant };
 
             return Ok(_event);
         }
 
-        [HttpDelete("id")]
+        [Authorize]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEvent(string id)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(userIdClaim, out Guid userId))
+            {
+                return BadRequest("Invalid user ID format.");
+            }
+
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (userRole == "Admin")
+            {
+                await _eventWriteRepository.DeleteAsync(id);
+                await _eventWriteRepository.SaveChangesAsync();
+                return Ok("Successfully deleted!");
+            }
+
+            var eventToDelete = await _eventReadRepository.GetEntityByIdAsync(id);
+            if (eventToDelete == null)
+            {
+                return NotFound("Event not found.");
+            }
+
+            if (eventToDelete.CreatedById != userId)
+            {
+                return Forbid("You are not authorized to delete this event.");
+            }
+
             await _eventWriteRepository.DeleteAsync(id);
             await _eventWriteRepository.SaveChangesAsync();
-            return Ok("Succsessfully deleted!");
+            return Ok("Successfully deleted!");
         }
 
         [HttpPost("id")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> ApproveEvent(string id)
         {
             var _event = await _eventReadRepository.GetEntityByIdAsync(id);
@@ -81,7 +116,7 @@ namespace EventGoAPI.API.Controllers
             {
                 return BadRequest("Cannot Find An Id!");
             }
-            
+            if (_event.isApproved) return Ok(_event);
             _event.isApproved = true;
             await _eventWriteRepository.UpdateAsync(_event);
             await _eventWriteRepository.SaveChangesAsync();

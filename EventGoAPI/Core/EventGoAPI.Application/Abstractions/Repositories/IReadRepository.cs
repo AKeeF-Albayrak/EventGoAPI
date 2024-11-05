@@ -9,6 +9,6 @@ namespace EventGoAPI.Application.Abstractions.Repositories
 {
     public interface IReadRepository<T> : IRepository<T> where T : BaseEntity
     {
-
+        Task<T> GetEntityByIdAsync(string id);
     }
 }

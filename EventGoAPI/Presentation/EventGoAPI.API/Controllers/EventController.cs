@@ -44,6 +44,7 @@ namespace EventGoAPI.API.Controllers
                 Category = dto.Category,
                 //Image = dto.Image,
                 CreatedTime = DateTime.Now,
+                isApproved = false,
             };
 
             Participant _participant = new Participant
@@ -70,6 +71,21 @@ namespace EventGoAPI.API.Controllers
             await _eventWriteRepository.DeleteAsync(id);
             await _eventWriteRepository.SaveChangesAsync();
             return Ok("Succsessfully deleted!");
+        }
+
+        [HttpPost("id")]
+        public async Task<IActionResult> ApproveEvent(string id)
+        {
+            var _event = await _eventReadRepository.GetEntityByIdAsync(id);
+            if (_event == null)
+            {
+                return BadRequest("Cannot Find An Id!");
+            }
+            
+            _event.isApproved = true;
+            await _eventWriteRepository.UpdateAsync(_event);
+            await _eventWriteRepository.SaveChangesAsync();
+            return Ok(_event);
         }
 
     }

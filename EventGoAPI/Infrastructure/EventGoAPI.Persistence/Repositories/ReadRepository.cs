@@ -21,5 +21,14 @@ namespace EventGoAPI.Persistence.Repositories
 
         public DbSet<T> Table => _context.Set<T>();
 
+        public async Task<T> GetEntityByIdAsync(string id)
+        {
+            if (!Guid.TryParse(id, out Guid guidId))
+            {
+                throw new ArgumentException("Invalid ID format", nameof(id));
+            }
+
+            return await Table.FindAsync(guidId);
+        }
     }
 }

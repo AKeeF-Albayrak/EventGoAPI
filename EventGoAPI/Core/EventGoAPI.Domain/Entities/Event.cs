@@ -23,6 +23,7 @@ namespace EventGoAPI.Domain.Entities
         public EventCategory Category { get; set; }
         public byte[]? Image { get; set; }
         public DateTime CreatedTime { get; set; }
+        public bool isApproved { get; set; }
         public User? CreatedBy { get; set; }
         public List<Message>? Messages { get; set; }
         public List<Participant>? Participants { get; set; }

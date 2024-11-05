@@ -38,5 +38,13 @@ namespace EventGoAPI.Persistence.Repositories
         }
 
         public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
+
+        public async Task<T> UpdateAsync(T entity)
+        {
+            var existingEntity = await Table.FirstOrDefaultAsync(e => e.Id == entity.Id);
+
+            _context.Entry(existingEntity).CurrentValues.SetValues(entity);
+            return existingEntity;
+        }
     }
 }

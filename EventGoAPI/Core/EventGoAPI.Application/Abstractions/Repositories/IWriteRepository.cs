@@ -13,5 +13,6 @@ namespace EventGoAPI.Application.Abstractions.Repositories
         Task AddAsync(T model);
         Task<int> SaveChangesAsync();
         Task DeleteAsync(string id);
+        Task<T> UpdateAsync(T model);
     }
 }

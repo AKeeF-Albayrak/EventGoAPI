@@ -2,7 +2,6 @@
 using EventGoAPI.Application.Abstractions.Services;
 using EventGoAPI.Application.Dtos.AuthDtos;
 using EventGoAPI.Domain.Entities;
-using EventGoAPI.Persistence.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;

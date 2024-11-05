@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventGoAPI.Persistence.Concretes.Repositories.Event
+namespace EventGoAPI.Persistence.Concretes.Repositories
 {
     public class EventReadRepository : ReadRepository<Event>, IEventReadRepository
     {

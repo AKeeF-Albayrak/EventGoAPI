@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventGoAPI.Persistence.Concretes.Repositories.Participant
+namespace EventGoAPI.Persistence.Concretes.Repositories
 {
     public class ParticipantReadRepository : ReadRepository<Participant>, IParticipantReadRepository
     {

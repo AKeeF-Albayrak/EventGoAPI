@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Persistence.Concretes.Repositories;
 
-namespace EventGoAPI.Persistence.Concretes.Repositories.User
+namespace EventGoAPI.Persistence.Concretes.Repositories
 {
     public class UserReadRepository : ReadRepository<User>, IUserReadRepository
     {

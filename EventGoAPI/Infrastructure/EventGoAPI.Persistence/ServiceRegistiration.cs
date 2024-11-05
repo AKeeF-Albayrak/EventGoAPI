@@ -1,8 +1,6 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
-using EventGoAPI.Persistence.Concretes.Repositories.Event;
-using EventGoAPI.Persistence.Concretes.Repositories.Participant;
-using EventGoAPI.Persistence.Concretes.Repositories.User;
+using EventGoAPI.Persistence.Concretes.Repositories;
 using EventGoAPI.Persistence.Concretes.Services;
 using EventGoAPI.Persistence.Context;
 using Microsoft.EntityFrameworkCore;

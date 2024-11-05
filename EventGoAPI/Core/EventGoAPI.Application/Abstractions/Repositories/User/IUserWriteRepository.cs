@@ -10,5 +10,6 @@ namespace EventGoAPI.Application.Abstractions.Repositories
 {
     public interface IUserWriteRepository : IWriteRepository<User>
     {
+        
     }
 }

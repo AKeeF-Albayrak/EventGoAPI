@@ -17,11 +17,13 @@ namespace EventGoAPI.API.Controllers
         private readonly IEventReadRepository _eventReadRepository;
         private readonly IEventWriteRepository _eventWriteRepository;
         private readonly IParticipantWriteRepository _participantWriteRepository;
-        public EventController(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, IParticipantWriteRepository participantWriteRepository)
+        private readonly IParticipantReadRepository _participantReadRepository;
+        public EventController(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, IParticipantWriteRepository participantWriteRepository, IParticipantReadRepository participantReadRepository)
         {
             _eventWriteRepository = eventWriteRepository;
             _eventReadRepository = eventReadRepository;
             _participantWriteRepository = participantWriteRepository;
+            _participantReadRepository = participantReadRepository;
         }
 
 
@@ -123,5 +125,55 @@ namespace EventGoAPI.API.Controllers
             return Ok(_event);
         }
 
+        [HttpPost("id")]
+        [Authorize]
+        public async Task<IActionResult> JoinEvent(string id)
+        {
+            // participant duplicate 2 kere req atabiliyr
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(userIdClaim, out Guid userId) || !Guid.TryParse(id, out Guid eventId))
+            {
+                return BadRequest("Invalid user ID format.");
+            }
+
+            var _participant = await _participantReadRepository.GetEntityByIdAsync(userIdClaim, id);
+            if (_participant != null) return Ok("You Are Already Exist In This Event!");
+
+            Participant participant = new Participant
+            {
+                Id = userId,
+                EventId = eventId,
+            };
+
+            await _participantWriteRepository.AddAsync(participant);
+            await _participantWriteRepository.SaveChangesAsync();
+
+            return Ok(participant);
+        }
+
+        [HttpPost("id")]
+        [Authorize]
+        public async Task<IActionResult> LeaveEvent(string id)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!Guid.TryParse(userIdClaim, out Guid userId) || !Guid.TryParse(id, out Guid eventId))
+            {
+                return BadRequest("Invalid user ID format.");
+            }
+
+            var _participant = await _participantReadRepository.GetEntityByIdAsync(userIdClaim, id);
+            if (_participant == null) return Ok("You Are Already Not Exist In This Event!");
+
+            Participant participant = new Participant
+            {
+                Id = userId,
+                EventId = eventId,
+            };
+
+            await _participantWriteRepository.DeleteAsync(userIdClaim, id);
+            await _participantWriteRepository.SaveChangesAsync();
+            return Ok("Succsessfully Deleted!");
+        }
     }
 }

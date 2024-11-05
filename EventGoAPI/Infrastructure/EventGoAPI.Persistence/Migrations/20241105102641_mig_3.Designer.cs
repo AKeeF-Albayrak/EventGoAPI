@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventGoAPI.Persistence.Migrations
 {
     [DbContext(typeof(EventGoDbContext))]
-    [Migration("20241103184338_mig_2")]
-    partial class mig_2
+    [Migration("20241105102641_mig_3")]
+    partial class mig_3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -113,13 +113,13 @@ namespace EventGoAPI.Persistence.Migrations
 
             modelBuilder.Entity("EventGoAPI.Domain.Entities.Participant", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("UserId", "EventId");
+                    b.HasKey("Id", "EventId");
 
                     b.HasIndex("EventId");
 
@@ -180,18 +180,11 @@ namespace EventGoAPI.Persistence.Migrations
                         .HasColumnType("bit");
 
                     b.Property<byte[]>("Image")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Interests")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsOnline")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastActive")
-                        .HasColumnType("datetime2");
 
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
@@ -267,7 +260,7 @@ namespace EventGoAPI.Persistence.Migrations
 
                     b.HasOne("EventGoAPI.Domain.Entities.User", "User")
                         .WithMany("Participants")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

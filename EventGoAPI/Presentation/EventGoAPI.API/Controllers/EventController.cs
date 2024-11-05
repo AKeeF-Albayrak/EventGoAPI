@@ -4,6 +4,7 @@ using EventGoAPI.Domain.Entities;
 using EventGoAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace EventGoAPI.API.Controllers
 {
@@ -13,20 +14,24 @@ namespace EventGoAPI.API.Controllers
     {
         private readonly IEventReadRepository _eventReadRepository;
         private readonly IEventWriteRepository _eventWriteRepository;
-        public EventController(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository)
+        private readonly IParticipantWriteRepository _participantWriteRepository;
+        public EventController(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, IParticipantWriteRepository participantWriteRepository)
         {
             _eventWriteRepository = eventWriteRepository;
             _eventReadRepository = eventReadRepository;
+            _participantWriteRepository = participantWriteRepository;
         }
 
 
         [HttpPost]
         public async Task<IActionResult> AddEvent([FromBody] EventAddDto dto)
         {
+            Guid id = Guid.NewGuid();
+            Guid createdById = Guid.Parse("72AF2F9FC4D8420A8CBB800A47133318");
             Event _event = new Event
             {
-                Id = Guid.NewGuid(),
-                //userid
+                Id = id,
+                CreatedById = createdById,
                 Name = dto.Name,
                 Description = dto.Description,
                 Date = dto.Date,
@@ -37,13 +42,35 @@ namespace EventGoAPI.API.Controllers
                 Latitude = dto.Latitude,
                 Longitude = dto.Longitude,
                 Category = dto.Category,
-                Image = dto.Image,
+                //Image = dto.Image,
                 CreatedTime = DateTime.Now,
+            };
+
+            Participant _participant = new Participant
+            {
+                Id = createdById,
+                EventId = id,
             };
 
             await _eventWriteRepository.AddAsync(_event);
             await _eventWriteRepository.SaveChangesAsync();
+
+            await _participantWriteRepository.AddAsync(_participant);
+            await _participantWriteRepository.SaveChangesAsync();
+            
+
+            _event.Participants = new List<Participant> { _participant };
+
             return Ok(_event);
         }
+
+        [HttpDelete("id")]
+        public async Task<IActionResult> DeleteEvent(string id)
+        {
+            await _eventWriteRepository.DeleteAsync(id);
+            await _eventWriteRepository.SaveChangesAsync();
+            return Ok("Succsessfully deleted!");
+        }
+
     }
 }

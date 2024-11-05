@@ -10,7 +10,6 @@ namespace EventGoAPI.Domain.Entities
 {
     public class User : BaseEntity
     {
-        public Guid Id { get; set; }
         public UserRole Role { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
@@ -20,18 +19,18 @@ namespace EventGoAPI.Domain.Entities
         public string Country { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public ICollection<EventCategory> Interests { get; set; }
+        public List<EventCategory> Interests { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public DateTime BirthDate { get; set; }
         public bool Gender { get; set; }
         public string PhoneNumber { get; set; }
-        public byte[] Image { get; set; }
+        public byte[]? Image { get; set; }
         public DateTime CreatedTime { get; set; }
 
-        public ICollection<Point> Points { get; set; }
-        public ICollection<Event> Events { get; set; }
-        public ICollection<Message> Messages { get; set; }
-        public ICollection<Participant> Participants { get; set; }
+        public List<Point> Points { get; set; }
+        public List<Event> Events { get; set; }
+        public List<Message> Messages { get; set; }
+        public List<Participant> Participants { get; set; }
     }
 }

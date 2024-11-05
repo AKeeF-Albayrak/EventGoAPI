@@ -16,7 +16,7 @@ namespace EventGoAPI.API.Controllers
         private readonly IUserReadRepository _userReadRepository;
         private readonly IUserWriteRepository _userWriteRepository;
         private readonly IPasswordHasher _passwordHasher;
-        public AuthController(IUserReadRepository userReadRepository, IUserWriteRepository userWriteRepository, PasswordHasher passwordHasher)
+        public AuthController(IUserReadRepository userReadRepository, IUserWriteRepository userWriteRepository, IPasswordHasher passwordHasher)
         {
             _userWriteRepository = userWriteRepository;
             _userReadRepository = userReadRepository;
@@ -72,12 +72,18 @@ namespace EventGoAPI.API.Controllers
                 BirthDate = dto.BirthDate,
                 Gender = dto.Gender,
                 PhoneNumber = dto.PhoneNumber,
-                Image = dto.Image,
+                //Image = dto.Image,
                 CreatedTime = DateTime.UtcNow,
             };
             await _userWriteRepository.AddAsync(user);
             await _userWriteRepository.SaveChangesAsync();
             return Ok(user);
         }
+
+        /*[HttpPost]
+        public async Task<IActionResult> ForgotPassword()
+        {
+
+        }*/
     }
 }

@@ -17,12 +17,12 @@ namespace EventGoAPI.Application.Dtos.AuthDtos
         public string Country { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public ICollection<EventCategory> Interests { get; set; }
+        public List<EventCategory> Interests { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public DateTime BirthDate { get; set; }
         public bool Gender { get; set; }
         public string PhoneNumber { get; set; }
-        public byte[] Image { get; set; }
+        //public byte[] Image { get; set; }
     }
 }

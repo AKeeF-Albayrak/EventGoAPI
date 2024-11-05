@@ -20,6 +20,23 @@ namespace EventGoAPI.Persistence.Repositories
         public DbSet<T> Table => _context.Set<T>();
 
         public async Task AddAsync(T entity) => await Table.AddAsync(entity);
+
+        public async Task DeleteAsync(string id)
+        {
+            if (!Guid.TryParse(id, out Guid guidId))
+            {
+                throw new ArgumentException("Invalid GUID format", nameof(id));
+            }
+            var entity = await Table.FirstOrDefaultAsync(e => e.Id == guidId);
+
+            if (entity == null)
+            {
+                throw new KeyNotFoundException("Entity with the specified ID was not found.");
+            }
+
+            Table.Remove(entity);
+        }
+
         public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
     }
 }

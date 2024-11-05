@@ -8,6 +8,8 @@ namespace EventGoAPI.Domain.Enums
 {
     public enum EventCategory
     {
-        //bla bla
+        Sport = 0,
+        Music = 1,
+
     }
 }

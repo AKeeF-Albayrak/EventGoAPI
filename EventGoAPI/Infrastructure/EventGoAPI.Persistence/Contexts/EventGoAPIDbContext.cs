@@ -28,12 +28,12 @@ namespace EventGoAPI.Persistence.Context
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Participant>()
-                .HasKey(p => new { p.UserId, p.EventId });
+                .HasKey(p => new { p.Id, p.EventId });
 
             modelBuilder.Entity<Participant>()
                 .HasOne(p => p.User)
                 .WithMany(u => u.Participants)
-                .HasForeignKey(p => p.UserId)
+                .HasForeignKey(p => p.Id)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Participant>()

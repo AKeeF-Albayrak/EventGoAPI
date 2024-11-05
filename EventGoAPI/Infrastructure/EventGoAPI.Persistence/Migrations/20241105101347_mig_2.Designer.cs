@@ -4,6 +4,7 @@ using EventGoAPI.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventGoAPI.Persistence.Migrations
 {
     [DbContext(typeof(EventGoDbContext))]
-    partial class EventGoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241105101347_mig_2")]
+    partial class mig_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,6 +63,7 @@ namespace EventGoAPI.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<byte[]>("Image")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<double>("Latitude")
@@ -109,13 +113,13 @@ namespace EventGoAPI.Persistence.Migrations
 
             modelBuilder.Entity("EventGoAPI.Domain.Entities.Participant", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id", "EventId");
+                    b.HasKey("UserId", "EventId");
 
                     b.HasIndex("EventId");
 
@@ -256,7 +260,7 @@ namespace EventGoAPI.Persistence.Migrations
 
                     b.HasOne("EventGoAPI.Domain.Entities.User", "User")
                         .WithMany("Participants")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

@@ -37,7 +37,7 @@ namespace EventGoAPI.API.Controllers
                 return NotFound("No events found for the user.");
             }
 
-            return Ok(events.ToList());
+            return Ok(events);
         }
 
         [HttpPost]
@@ -152,7 +152,7 @@ namespace EventGoAPI.API.Controllers
             }
 
             var _participant = await _participantReadRepository.GetEntityByIdAsync(userIdClaim, id);
-            if (_participant != null) return Ok("You Are Already Exist In This Event!");
+            if (_participant != null) return Forbid("You Are Already Exist In This Event!");
 
             Participant participant = new Participant
             {
@@ -170,6 +170,7 @@ namespace EventGoAPI.API.Controllers
         [Authorize]
         public async Task<IActionResult> LeaveEvent(string id)
         {
+            //kendi olusturdugu etkinlikten cikamasin
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (!Guid.TryParse(userIdClaim, out Guid userId) || !Guid.TryParse(id, out Guid eventId))
@@ -189,6 +190,68 @@ namespace EventGoAPI.API.Controllers
             await _participantWriteRepository.DeleteAsync(userIdClaim, id);
             await _participantWriteRepository.SaveChangesAsync();
             return Ok("Succsessfully Deleted!");
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateEvent(string id, [FromBody] EventUpdateDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!Guid.TryParse(id, out Guid guidId))
+            {
+                return BadRequest("Invalid ID format.");
+            }
+
+            var existingEvent = await _eventReadRepository.GetEntityByIdAsync(id);
+            if (existingEvent == null)
+            {
+                return NotFound("Event not found.");
+            }
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!Guid.TryParse(userIdClaim, out Guid userId))
+            {
+                return BadRequest("Invalid user ID format.");
+            }
+
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+
+            if (existingEvent.CreatedById != userId && userRole != "admin")
+            {
+                return Unauthorized();
+            }
+
+            Event _event = new Event
+            {
+                Id = guidId,
+                CreatedById = userId,
+                Name = dto.Name,
+                Description = dto.Description,
+                Date = dto.Date,
+                Duration = dto.Duration,
+                Address = dto.Address,
+                City = dto.City,
+                Country = dto.Country,
+                Latitude = dto.Latitude,
+                Longitude = dto.Longitude,
+                Category = dto.Category,
+                Image = existingEvent.Image,
+                CreatedTime = existingEvent.CreatedTime,
+                isApproved = existingEvent.isApproved,
+                CreatedBy = existingEvent.CreatedBy,
+                Messages = existingEvent.Messages,
+                Participants = existingEvent.Participants,
+            };
+            await _eventWriteRepository.UpdateAsync(_event);
+            await _eventWriteRepository.SaveChangesAsync();
+
+            return Ok(_event);
         }
     }
 }

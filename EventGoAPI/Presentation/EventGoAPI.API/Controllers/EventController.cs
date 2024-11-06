@@ -1,4 +1,5 @@
-﻿using EventGoAPI.Application.Abstractions.Repositories;
+﻿using EventGoAPI.API.Hubs;
+using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Dtos.EventDtos;
 using EventGoAPI.Domain.Entities;
 using EventGoAPI.Domain.Entities;
@@ -18,12 +19,14 @@ namespace EventGoAPI.API.Controllers
         private readonly IEventWriteRepository _eventWriteRepository;
         private readonly IParticipantWriteRepository _participantWriteRepository;
         private readonly IParticipantReadRepository _participantReadRepository;
-        public EventController(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, IParticipantWriteRepository participantWriteRepository, IParticipantReadRepository participantReadRepository)
+        private readonly IHubContext<NotificationsHub> _notificationsHub;
+        public EventController(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, IParticipantWriteRepository participantWriteRepository, IParticipantReadRepository participantReadRepository, IHubContext<NotificationsHub> notificationsHub)
         {
             _eventWriteRepository = eventWriteRepository;
             _eventReadRepository = eventReadRepository;
             _participantWriteRepository = participantWriteRepository;
             _participantReadRepository = participantReadRepository;
+            _notificationsHub = notificationsHub;
         }
 
         [HttpGet]
@@ -137,6 +140,14 @@ namespace EventGoAPI.API.Controllers
             _event.isApproved = true;
             await _eventWriteRepository.UpdateAsync(_event);
             await _eventWriteRepository.SaveChangesAsync();
+
+            if (!string.IsNullOrEmpty(_event.CreatedById.ToString()))
+            {
+                var notificationMessage = $"Your event '{_event.Name}' has been approved!";
+                await _notificationsHub.Clients.User(_event.CreatedById.ToString())
+                    .SendAsync("ReceiveNotification", notificationMessage);
+            }
+
             return Ok(_event);
         }
 

@@ -26,11 +26,25 @@ namespace EventGoAPI.API.Controllers
             _participantReadRepository = participantReadRepository;
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<List<Event>>> GetEvents()
+        {
+            var events = await _eventReadRepository.GetAllEventsForUserAsync();
+
+            if (events == null || !events.Any())
+            {
+                return NotFound("No events found for the user.");
+            }
+
+            return Ok(events.ToList());
+        }
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> AddEvent([FromBody] EventAddDto dto)
         {
+            // puan eklicek
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (!Guid.TryParse(userIdClaim, out Guid createdById))
             {
@@ -78,6 +92,7 @@ namespace EventGoAPI.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEvent(string id)
         {
+            //puani silecek
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (!Guid.TryParse(userIdClaim, out Guid userId))
             {
@@ -129,7 +144,7 @@ namespace EventGoAPI.API.Controllers
         [Authorize]
         public async Task<IActionResult> JoinEvent(string id)
         {
-            // participant duplicate 2 kere req atabiliyr
+            // zaman kontrolu
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (!Guid.TryParse(userIdClaim, out Guid userId) || !Guid.TryParse(id, out Guid eventId))
             {

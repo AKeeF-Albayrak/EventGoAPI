@@ -20,5 +20,7 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
         }
 
         public DbSet<Event> Table => _context.Set<Event>();
+
+        public async Task<IEnumerable<Event>> GetAllEventsForUserAsync() => await Table.Where(entity => EF.Property<bool>(entity, "isApproved")).ToListAsync();
     }
 }

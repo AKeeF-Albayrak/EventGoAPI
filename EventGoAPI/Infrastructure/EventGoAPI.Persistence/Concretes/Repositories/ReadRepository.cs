@@ -21,6 +21,11 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
 
         public DbSet<T> Table => _context.Set<T>();
 
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await Table.ToListAsync();
+        }
+
         public async Task<T> GetEntityByIdAsync(string id)
         {
             if (!Guid.TryParse(id, out Guid guidId))

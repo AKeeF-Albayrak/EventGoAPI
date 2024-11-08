@@ -1,5 +1,6 @@
 ﻿using EventGoAPI.API.Hubs;
 using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Abstractions.Services;
 using EventGoAPI.Application.Dtos.EventDtos;
 using EventGoAPI.Domain.Entities;
 using EventGoAPI.Domain.Entities;
@@ -20,13 +21,15 @@ namespace EventGoAPI.API.Controllers
         private readonly IParticipantWriteRepository _participantWriteRepository;
         private readonly IParticipantReadRepository _participantReadRepository;
         private readonly IHubContext<NotificationsHub> _notificationsHub;
-        public EventController(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, IParticipantWriteRepository participantWriteRepository, IParticipantReadRepository participantReadRepository, IHubContext<NotificationsHub> notificationsHub)
+        private readonly ITokenService _tokenService;
+        public EventController(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, IParticipantWriteRepository participantWriteRepository, IParticipantReadRepository participantReadRepository, IHubContext<NotificationsHub> notificationsHub, ITokenService tokenService)
         {
             _eventWriteRepository = eventWriteRepository;
             _eventReadRepository = eventReadRepository;
             _participantWriteRepository = participantWriteRepository;
             _participantReadRepository = participantReadRepository;
             _notificationsHub = notificationsHub;
+            _tokenService = tokenService;
         }
 
         [HttpGet]

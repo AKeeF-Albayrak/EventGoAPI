@@ -6,6 +6,8 @@ using EventGoAPI.Persistence;
 using Microsoft.OpenApi.Models;
 using EventGoAPI.Persistence.Concretes.Services;
 using EventGoAPI.API.Hubs;
+using System.IdentityModel.Tokens.Jwt;
+using EventGoAPI.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +22,7 @@ builder.Services.AddCors(options =>
 
 builder.Configuration.AddUserSecrets<Program>();
 
-builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddPersistenceServices();
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
@@ -54,13 +56,22 @@ builder.Services.AddAuthentication(options =>
         OnMessageReceived = context =>
         {
             var accessToken = context.Request.Query["access_token"];
-
             var path = context.HttpContext.Request.Path;
             if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notificationshub"))
             {
                 context.Token = accessToken;
             }
             return Task.CompletedTask;
+        },
+        OnTokenValidated = async context =>
+        {
+            var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
+            var token = context.SecurityToken as JwtSecurityToken;
+
+            if (token != null && await tokenService.IsTokenBlacklistedAsync(token.RawData))
+            {
+                context.Fail("This token is blacklisted.");
+            }
         }
     };
 });
@@ -107,6 +118,7 @@ app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<TokenBlacklistMiddleware>();
 
 app.MapControllers();
 

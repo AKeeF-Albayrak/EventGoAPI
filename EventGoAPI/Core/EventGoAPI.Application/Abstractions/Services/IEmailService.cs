@@ -8,5 +8,6 @@ namespace EventGoAPI.Application.Abstractions.Services
 {
     public interface IEmailService
     {
+        Task SendEmailAsync(string to, string verificationCode);
     }
 }

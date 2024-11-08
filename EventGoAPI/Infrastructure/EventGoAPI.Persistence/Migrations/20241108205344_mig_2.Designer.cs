@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventGoAPI.Persistence.Migrations
 {
     [DbContext(typeof(EventGoDbContext))]
-    [Migration("20241106092947_mig_1")]
-    partial class mig_1
+    [Migration("20241108205344_mig_2")]
+    partial class mig_2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -202,6 +202,12 @@ namespace EventGoAPI.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("PasswordResetAuthorized")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PasswordResetAuthorizedExpiration")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -216,6 +222,12 @@ namespace EventGoAPI.Persistence.Migrations
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VerificationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("VerificationCodeExpiration")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

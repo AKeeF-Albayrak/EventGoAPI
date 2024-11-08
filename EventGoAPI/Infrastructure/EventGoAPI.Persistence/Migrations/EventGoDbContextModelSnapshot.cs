@@ -199,6 +199,12 @@ namespace EventGoAPI.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("PasswordResetAuthorized")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PasswordResetAuthorizedExpiration")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -213,6 +219,12 @@ namespace EventGoAPI.Persistence.Migrations
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VerificationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("VerificationCodeExpiration")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

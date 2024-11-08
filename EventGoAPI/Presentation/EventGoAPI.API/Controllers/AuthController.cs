@@ -2,9 +2,11 @@
 using EventGoAPI.Application.Abstractions.Services;
 using EventGoAPI.Application.Dtos.AuthDtos;
 using EventGoAPI.Domain.Entities;
+using EventGoAPI.Persistence.Concretes.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Security.Claims;
 
 namespace EventGoAPI.API.Controllers
 {
@@ -16,12 +18,14 @@ namespace EventGoAPI.API.Controllers
         private readonly IUserWriteRepository _userWriteRepository;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenService _tokenService;
-        public AuthController(IUserReadRepository userReadRepository, IUserWriteRepository userWriteRepository, IPasswordHasher passwordHasher, ITokenService tokenService)
+        private readonly IEmailService _emailService;
+        public AuthController(IUserReadRepository userReadRepository, IUserWriteRepository userWriteRepository, IPasswordHasher passwordHasher, ITokenService tokenService, IEmailService emailService)
         {
             _userWriteRepository = userWriteRepository;
             _userReadRepository = userReadRepository;
             _passwordHasher = passwordHasher;
             _tokenService = tokenService;
+            _emailService = emailService;
         }
 
         [HttpPost]
@@ -82,10 +86,104 @@ namespace EventGoAPI.API.Controllers
             return Ok(user);
         }
 
-        /*[HttpPost]
-        public async Task<IActionResult> ForgotPassword()
+        [HttpPost]
+        public async Task<IActionResult> SendEmail([FromBody] string email)
         {
+            var random = new Random();
+            string verificationCode = random.Next(100000, 999999).ToString();
 
-        }*/
+            var user = await _userReadRepository.CheckUserByUsernameEmailPhoneNumberAsync("", email, "");
+            if (user == null) return BadRequest("Email Not Found");
+            await _emailService.SendEmailAsync(email, verificationCode);
+            user.VerificationCode = verificationCode;
+            user.VerificationCodeExpiration = DateTime.Now.AddMinutes(3);
+
+            await _userWriteRepository.UpdateAsync(user);
+            await _userWriteRepository.SaveChangesAsync();
+
+            return Ok("Verification Code Sended!");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VerifyCode(string email, string enteredCode)
+        {
+            var user = await _userReadRepository.CheckUserByUsernameEmailPhoneNumberAsync("", email, "");
+
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (user.VerificationCode == null || user.VerificationCodeExpiration == null)
+            {
+                return BadRequest("No verification code found. Please request a new code.");
+            }
+
+            if (user.VerificationCodeExpiration < DateTime.Now)
+            {
+                return BadRequest("The verification code has expired. Please request a new code.");
+            }
+
+            if (user.VerificationCode != enteredCode)
+            {
+                return BadRequest("Invalid verification code.");
+            }
+
+            user.VerificationCode = null;
+            user.VerificationCodeExpiration = null;
+            user.PasswordResetAuthorized = true;
+            user.PasswordResetAuthorizedExpiration = DateTime.Now.AddMinutes(10);
+
+            await _userWriteRepository.UpdateAsync(user);
+            await _userWriteRepository.SaveChangesAsync();
+
+            return Ok("Verification successful. You are now authenticated.");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePassword([FromBody] string newPassword, string mail)
+        {
+            var user = await _userReadRepository.CheckUserByUsernameEmailPhoneNumberAsync("", mail, "");
+
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (!user.PasswordResetAuthorized || user.PasswordResetAuthorizedExpiration < DateTime.Now)
+            {
+                user.PasswordResetAuthorized = false;
+                user.PasswordResetAuthorizedExpiration = null;
+
+                await _userWriteRepository.UpdateAsync(user);
+                await _userWriteRepository.SaveChangesAsync();
+
+                return Unauthorized("You are not authorized to update the password. Please verify the code again.");
+            }
+
+            user.PasswordHash = _passwordHasher.HashPassword(newPassword);
+            user.PasswordResetAuthorized = false;
+            user.PasswordResetAuthorizedExpiration = null;
+
+            await _userWriteRepository.UpdateAsync(user);
+            await _userWriteRepository.SaveChangesAsync();
+
+            return Ok("Password updated successfully.");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest("Token is missing.");
+            }
+
+            await _tokenService.AddToBlacklistAsync(token);
+
+            return Ok("Successfully logged out.");
+        }
     }
 }

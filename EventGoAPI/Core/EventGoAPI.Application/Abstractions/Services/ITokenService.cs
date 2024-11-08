@@ -10,5 +10,7 @@ namespace EventGoAPI.Application.Abstractions.Services
     public interface ITokenService
     {
         string GenerateToken(User user);
+        Task AddToBlacklistAsync(string token);
+        Task<bool> IsTokenBlacklistedAsync(string token);
     }
 }

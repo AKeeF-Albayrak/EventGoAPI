@@ -12,6 +12,7 @@ namespace EventGoAPI.Persistence.Concretes.Services
     public class TokenService : ITokenService
     {
         private readonly string _key;
+        private readonly HashSet<string> _blacklistedTokens = new();
 
         public TokenService(IConfiguration configuration)
         {
@@ -24,6 +25,7 @@ namespace EventGoAPI.Persistence.Concretes.Services
 
         public string GenerateToken(User user)
         {
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_key);
 
@@ -43,6 +45,17 @@ namespace EventGoAPI.Persistence.Concretes.Services
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        public Task AddToBlacklistAsync(string token)
+        {
+            _blacklistedTokens.Add(token);
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> IsTokenBlacklistedAsync(string token)
+        {
+            return Task.FromResult(_blacklistedTokens.Contains(token));
         }
     }
 }

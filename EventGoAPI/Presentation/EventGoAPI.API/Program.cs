@@ -8,6 +8,7 @@ using EventGoAPI.Persistence.Concretes.Services;
 using EventGoAPI.API.Hubs;
 using System.IdentityModel.Tokens.Jwt;
 using EventGoAPI.API.Middlewares;
+using EventGoAPI.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Services.AddCors(options =>
 builder.Configuration.AddUserSecrets<Program>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices();
 builder.Services.AddSignalR();
 builder.Services.AddControllers();

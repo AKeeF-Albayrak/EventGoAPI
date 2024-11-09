@@ -7,11 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EventGoAPI.Domain\EventGoAPI.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Command\User\" />
+    <Folder Include="Features\Query\User\" />
   </ItemGroup>
 
 </Project>

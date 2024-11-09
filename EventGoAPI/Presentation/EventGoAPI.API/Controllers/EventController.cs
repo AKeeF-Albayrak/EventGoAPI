@@ -2,8 +2,10 @@
 using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
 using EventGoAPI.Application.Dtos.EventDtos;
+using EventGoAPI.Application.Features.Query.Event.GetAllEvents;
 using EventGoAPI.Domain.Entities;
 using EventGoAPI.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +24,8 @@ namespace EventGoAPI.API.Controllers
         private readonly IParticipantReadRepository _participantReadRepository;
         private readonly IHubContext<NotificationsHub> _notificationsHub;
         private readonly ITokenService _tokenService;
-        public EventController(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, IParticipantWriteRepository participantWriteRepository, IParticipantReadRepository participantReadRepository, IHubContext<NotificationsHub> notificationsHub, ITokenService tokenService)
+        private readonly IMediator _mediator;
+        public EventController(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, IParticipantWriteRepository participantWriteRepository, IParticipantReadRepository participantReadRepository, IHubContext<NotificationsHub> notificationsHub, ITokenService tokenService, IMediator mediator)
         {
             _eventWriteRepository = eventWriteRepository;
             _eventReadRepository = eventReadRepository;
@@ -30,20 +33,15 @@ namespace EventGoAPI.API.Controllers
             _participantReadRepository = participantReadRepository;
             _notificationsHub = notificationsHub;
             _tokenService = tokenService;
+            _mediator = mediator;
         }
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<List<Event>>> GetEvents()
+        public async Task<ActionResult> GetEvents([FromQuery] GetAllEventsQueryRequest getAllEventsQueryRequest)
         {
-            var events = await _eventReadRepository.GetAllEventsForUserAsync();
-
-            if (events == null || !events.Any())
-            {
-                return NotFound("No events found for the user.");
-            }
-
-            return Ok(events);
+            GetAllEventsQueryResponse response = await _mediator.Send(getAllEventsQueryRequest);
+            return Ok(response);
         }
 
         [HttpPost]

@@ -31,6 +31,7 @@ builder.Services.AddSignalR();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor();
 
 var secretKey = builder.Configuration["JWT:Secret"];
 if (string.IsNullOrEmpty(secretKey))
@@ -122,6 +123,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<TokenBlacklistMiddleware>();
+app.UseMiddleware<TokenMiddleware>();
 
 app.MapControllers();
 

@@ -37,7 +37,6 @@ namespace EventGoAPI.Persistence
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddSingleton<ITokenService, TokenService>();
             services.AddScoped<IEmailService, EmailService>();
-
         }
     }
 }

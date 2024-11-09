@@ -2,6 +2,7 @@
 using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
 using EventGoAPI.Application.Dtos.EventDtos;
+using EventGoAPI.Application.Features.Command.Event.CreateEvent;
 using EventGoAPI.Application.Features.Query.Event.GetAllEvents;
 using EventGoAPI.Domain.Entities;
 using EventGoAPI.Domain.Entities;
@@ -46,50 +47,11 @@ namespace EventGoAPI.API.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> AddEvent([FromBody] EventAddDto dto)
+        public async Task<IActionResult> AddEvent([FromQuery] CreateEventCommandRequest createEventCommandRequest)
         {
             // puan eklicek
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!Guid.TryParse(userIdClaim, out Guid createdById))
-            {
-                return BadRequest("Invalid user ID format.");
-            }
-
-            Guid id = Guid.NewGuid();
-
-            Event _event = new Event
-            {
-                Id = id,
-                CreatedById = createdById,
-                Name = dto.Name,
-                Description = dto.Description,
-                Date = dto.Date,
-                Duration = dto.Duration,
-                Address = dto.Address,
-                City = dto.City,
-                Country = dto.Country,
-                Latitude = dto.Latitude,
-                Longitude = dto.Longitude,
-                Category = dto.Category,
-                CreatedTime = DateTime.Now,
-                isApproved = false,
-            };
-
-            Participant _participant = new Participant
-            {
-                Id = createdById,
-                EventId = id,
-            };
-
-            await _eventWriteRepository.AddAsync(_event);
-            await _eventWriteRepository.SaveChangesAsync();
-
-            await _participantWriteRepository.AddAsync(_participant);
-            await _participantWriteRepository.SaveChangesAsync();
-
-            _event.Participants = new List<Participant> { _participant };
-
-            return Ok(_event);
+            CreateEventCommandResponse response = await _mediator.Send(createEventCommandRequest);
+            return Ok(response);
         }
 
         [Authorize]

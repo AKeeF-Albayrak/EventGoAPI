@@ -9,6 +9,7 @@ using EventGoAPI.API.Hubs;
 using System.IdentityModel.Tokens.Jwt;
 using EventGoAPI.API.Middlewares;
 using EventGoAPI.Application;
+using EventGoAPI.Application.Abstractions.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,7 @@ builder.Services.AddCors(options =>
 builder.Configuration.AddUserSecrets<Program>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
-
+builder.Services.AddScoped<INotificationsHub, NotificationsHub>();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices();
 builder.Services.AddSignalR();
@@ -128,7 +129,6 @@ app.UseMiddleware<TokenBlacklistMiddleware>();
 
 app.MapControllers();
 
-app.MapHub<ChatHub>("/chathub").RequireAuthorization();
-app.MapHub<NotificationsHub>("/notificationshub").RequireAuthorization();
+app.MapHub<NotificationsHub>("/notificationsHub");
 
 app.Run();

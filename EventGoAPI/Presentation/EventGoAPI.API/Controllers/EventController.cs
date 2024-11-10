@@ -3,6 +3,9 @@ using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
 using EventGoAPI.Application.Dtos.EventDtos;
 using EventGoAPI.Application.Features.Command.Event.CreateEvent;
+using EventGoAPI.Application.Features.Command.Event.DeleteEvent;
+using EventGoAPI.Application.Features.Command.Participant.CreateParticipant;
+using EventGoAPI.Application.Features.Command.Participant.DeleteParticipant;
 using EventGoAPI.Application.Features.Query.Event.GetAllEvents;
 using EventGoAPI.Domain.Entities;
 using EventGoAPI.Domain.Entities;
@@ -49,45 +52,15 @@ namespace EventGoAPI.API.Controllers
         [Authorize]
         public async Task<IActionResult> AddEvent([FromQuery] CreateEventCommandRequest createEventCommandRequest)
         {
-            // puan eklicek
             CreateEventCommandResponse response = await _mediator.Send(createEventCommandRequest);
             return Ok(response);
         }
 
-        [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEvent(string id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteEvent([FromQuery] DeleteEventCommandRequest deleteEventCommandRequest)
         {
-            //puani silecek
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!Guid.TryParse(userIdClaim, out Guid userId))
-            {
-                return BadRequest("Invalid user ID format.");
-            }
-
-            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
-
-            if (userRole == "Admin")
-            {
-                await _eventWriteRepository.DeleteAsync(id);
-                await _eventWriteRepository.SaveChangesAsync();
-                return Ok("Successfully deleted!");
-            }
-
-            var eventToDelete = await _eventReadRepository.GetEntityByIdAsync(id);
-            if (eventToDelete == null)
-            {
-                return NotFound("Event not found.");
-            }
-
-            if (eventToDelete.CreatedById != userId)
-            {
-                return Forbid("You are not authorized to delete this event.");
-            }
-
-            await _eventWriteRepository.DeleteAsync(id);
-            await _eventWriteRepository.SaveChangesAsync();
-            return Ok("Successfully deleted!");
+            DeleteEventCommandResponse response = await _mediator.Send(deleteEventCommandRequest);
+            return Ok(response);
         }
 
         [HttpPost("id")]
@@ -114,56 +87,20 @@ namespace EventGoAPI.API.Controllers
             return Ok(_event);
         }
 
-        [HttpPost("id")]
+        [HttpPost]
         [Authorize]
-        public async Task<IActionResult> JoinEvent(string id)
+        public async Task<IActionResult> JoinEvent([FromQuery] CreateParticipantCommandRequest createParticipantCommandRequest)
         {
-            // zaman kontrolu
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!Guid.TryParse(userIdClaim, out Guid userId) || !Guid.TryParse(id, out Guid eventId))
-            {
-                return BadRequest("Invalid user ID format.");
-            }
-
-            var _participant = await _participantReadRepository.GetEntityByIdAsync(userIdClaim, id);
-            if (_participant != null) return Forbid("You Are Already Exist In This Event!");
-
-            Participant participant = new Participant
-            {
-                Id = userId,
-                EventId = eventId,
-            };
-
-            await _participantWriteRepository.AddAsync(participant);
-            await _participantWriteRepository.SaveChangesAsync();
-
-            return Ok(participant);
+            CreateParticipantCommandResponse response = await _mediator.Send(createParticipantCommandRequest);
+            return Ok(response);
         }
 
-        [HttpPost("id")]
+        [HttpPost]
         [Authorize]
-        public async Task<IActionResult> LeaveEvent(string id)
+        public async Task<IActionResult> LeaveEvent([FromQuery] DeleteParticipantCommandRequest deleteParticipantCommandRequest)
         {
-            //kendi olusturdugu etkinlikten cikamasin
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (!Guid.TryParse(userIdClaim, out Guid userId) || !Guid.TryParse(id, out Guid eventId))
-            {
-                return BadRequest("Invalid user ID format.");
-            }
-
-            var _participant = await _participantReadRepository.GetEntityByIdAsync(userIdClaim, id);
-            if (_participant == null) return Ok("You Are Already Not Exist In This Event!");
-
-            Participant participant = new Participant
-            {
-                Id = userId,
-                EventId = eventId,
-            };
-
-            await _participantWriteRepository.DeleteAsync(userIdClaim, id);
-            await _participantWriteRepository.SaveChangesAsync();
-            return Ok("Succsessfully Deleted!");
+            DeleteParticipantCommandResponse response = await _mediator.Send(deleteParticipantCommandRequest);
+            return Ok(response);
         }
 
         [HttpPut("{id}")]

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="Features\Command\User\" />
+    <Folder Include="Features\Query\Participant\" />
     <Folder Include="Features\Query\User\" />
   </ItemGroup>
 

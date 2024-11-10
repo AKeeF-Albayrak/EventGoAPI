@@ -10,6 +10,6 @@ namespace EventGoAPI.Application.Features.Query.Event.GetAllEvents
     public class GetAllEventsQueryResponse
     {
         public int TotalEventCount { get; set; }
-        public object Events { get; set; }
+        public IEnumerable<Domain.Entities.Event> Events { get; set; }
     }
 }

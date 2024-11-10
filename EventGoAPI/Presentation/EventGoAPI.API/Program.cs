@@ -122,8 +122,9 @@ app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<TokenBlacklistMiddleware>();
+
 app.UseMiddleware<TokenMiddleware>();
+app.UseMiddleware<TokenBlacklistMiddleware>();
 
 app.MapControllers();
 

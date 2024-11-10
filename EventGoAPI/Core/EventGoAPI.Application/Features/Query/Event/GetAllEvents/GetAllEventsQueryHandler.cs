@@ -18,7 +18,7 @@ namespace EventGoAPI.Application.Features.Query.Event.GetAllEvents
         }
         public async Task<GetAllEventsQueryResponse> Handle(GetAllEventsQueryRequest request, CancellationToken cancellationToken)
         {
-            var events = await _eventReadRepository.GetAllAsync();
+            var events = await _eventReadRepository.GetAllEventsAsync();
 
             return new()
             {

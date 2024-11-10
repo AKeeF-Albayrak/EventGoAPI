@@ -16,7 +16,7 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
     {
         private IEventWriteRepository _eventWriteRepository;
         private IParticipantWriteRepository _participantWriteRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private IHttpContextAccessor _httpContextAccessor;
         public CreateEventCommandHandler(IEventWriteRepository eventWriteRepository, IParticipantWriteRepository participantWriteRepository, IHttpContextAccessor httpContextAccessor)
         {
             _eventWriteRepository = eventWriteRepository;
@@ -26,14 +26,15 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
 
         public async Task<CreateEventCommandResponse> Handle(CreateEventCommandRequest request, CancellationToken cancellationToken)
         {
+            //puan ekleme
             if (_httpContextAccessor.HttpContext?.Items["UserId"] is not Guid userId)
             {
                 throw new UnauthorizedAccessException("User ID could not be found or is not a valid GUID.");
             }
-
-
+            Guid eventId = Guid.NewGuid();
             var newEvent = new Domain.Entities.Event
             {
+                Id = eventId,
                 Name = request.Name,
                 Description = request.Description,
                 Date = request.Date,
@@ -44,13 +45,22 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
                 Latitude = request.Latitude,
                 Longitude = request.Longitude,
                 Category = request.Category,
-                CreatedTime = request.CreatedTime,
+                CreatedTime = DateTime.Now,
                 CreatedById = userId,
                 isApproved = false
             };
 
+            var newParticipant = new Domain.Entities.Participant
+            {
+                EventId = eventId,
+                Id = userId
+            };
+
             await _eventWriteRepository.AddAsync(newEvent);
             await _eventWriteRepository.SaveChangesAsync();
+
+            await _participantWriteRepository.AddAsync(newParticipant);
+            await _participantWriteRepository.SaveChangesAsync();
 
             var response = new CreateEventCommandResponse
             {

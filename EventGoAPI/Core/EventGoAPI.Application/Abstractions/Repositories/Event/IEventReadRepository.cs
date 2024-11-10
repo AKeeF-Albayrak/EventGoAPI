@@ -10,5 +10,6 @@ namespace EventGoAPI.Application.Abstractions.Repositories
     public interface IEventReadRepository : IReadRepository<Event>
     {
         public Task<IEnumerable<Event>> GetAllEventsForUserAsync();
+        public Task<IEnumerable<Event>> GetAllEventsAsync();
     }
 }

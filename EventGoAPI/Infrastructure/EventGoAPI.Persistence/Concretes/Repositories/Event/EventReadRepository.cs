@@ -21,6 +21,14 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
 
         public DbSet<Event> Table => _context.Set<Event>();
 
+        public async Task<IEnumerable<Event>> GetAllEventsAsync()
+        {
+            return await Table
+                .Include(e => e.Participants)
+                .Include(e => e.Messages)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Event>> GetAllEventsForUserAsync() => await Table.Where(entity => EF.Property<bool>(entity, "isApproved")).ToListAsync();
     }
 }

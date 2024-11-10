@@ -21,6 +21,5 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
         public double Longitude { get; set; }
         public EventCategory Category { get; set; }
         //public byte[]? Image { get; set; }
-        public DateTime CreatedTime { get; set; }
     }
 }

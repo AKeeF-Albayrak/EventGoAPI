@@ -10,7 +10,6 @@ using EventGoAPI.Application.Features.Command.Participant.CreateParticipant;
 using EventGoAPI.Application.Features.Command.Participant.DeleteParticipant;
 using EventGoAPI.Application.Features.Query.Event.GetAllEvents;
 using EventGoAPI.Domain.Entities;
-using EventGoAPI.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -40,14 +39,14 @@ namespace EventGoAPI.API.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> AddEvent([FromQuery] CreateEventCommandRequest createEventCommandRequest)
+        public async Task<IActionResult> AddEvent([FromBody] CreateEventCommandRequest createEventCommandRequest)
         {
             CreateEventCommandResponse response = await _mediator.Send(createEventCommandRequest);
             return Ok(response);
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteEvent([FromQuery] DeleteEventCommandRequest deleteEventCommandRequest)
+        public async Task<IActionResult> DeleteEvent([FromBody] DeleteEventCommandRequest deleteEventCommandRequest)
         {
             DeleteEventCommandResponse response = await _mediator.Send(deleteEventCommandRequest);
             return Ok(response);
@@ -55,7 +54,7 @@ namespace EventGoAPI.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> ApproveEvent([FromQuery] ApproveEventCommandRequest approveEventCommandRequest)
+        public async Task<IActionResult> ApproveEvent([FromBody] ApproveEventCommandRequest approveEventCommandRequest)
         {
             ApproveEventCommandResponse response = await _mediator.Send(approveEventCommandRequest);
             return Ok(response);
@@ -63,7 +62,7 @@ namespace EventGoAPI.API.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> JoinEvent([FromQuery] CreateParticipantCommandRequest createParticipantCommandRequest)
+        public async Task<IActionResult> JoinEvent([FromBody] CreateParticipantCommandRequest createParticipantCommandRequest)
         {
             CreateParticipantCommandResponse response = await _mediator.Send(createParticipantCommandRequest);
             return Ok(response);
@@ -71,7 +70,7 @@ namespace EventGoAPI.API.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> LeaveEvent([FromQuery] DeleteParticipantCommandRequest deleteParticipantCommandRequest)
+        public async Task<IActionResult> LeaveEvent([FromBody] DeleteParticipantCommandRequest deleteParticipantCommandRequest)
         {
             DeleteParticipantCommandResponse response = await _mediator.Send(deleteParticipantCommandRequest);
             return Ok(response);
@@ -79,7 +78,7 @@ namespace EventGoAPI.API.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UpdateEvent([FromQuery] UpdateEventCommandRequest updateEventCommandRequest)
+        public async Task<IActionResult> UpdateEvent([FromBody] UpdateEventCommandRequest updateEventCommandRequest)
         {
             UpdateEventCommandResponse response = await _mediator.Send(updateEventCommandRequest);
             return Ok(response);

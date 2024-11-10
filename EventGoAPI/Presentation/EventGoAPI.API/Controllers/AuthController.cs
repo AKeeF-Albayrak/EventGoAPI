@@ -24,40 +24,39 @@ namespace EventGoAPI.API.Controllers
         private readonly IMediator _mediator;
         public AuthController(IMediator mediator)
         {
-
             _mediator = mediator;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromQuery] LoginUserQueryRequest loginUserQueryRequest)
+        public async Task<IActionResult> Login([FromBody] LoginUserQueryRequest loginUserQueryRequest)
         {
             LoginUserQueryResponse response = await _mediator.Send(loginUserQueryRequest);
             return response.Success ? Ok(response) : Conflict(new { message = response.Message });
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUp([FromQuery] CreateUserCommandRequest createUserCommandRequest)
+        public async Task<IActionResult> SignUp([FromBody] CreateUserCommandRequest createUserCommandRequest)
         {
             CreateUserCommandResponse response = await _mediator.Send(createUserCommandRequest);
             return response.Success ? Ok(response) : Conflict(new { message = response.Message });
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendEmail([FromQuery] SendEmailCommandRequest sendEmailCommandRequest)
+        public async Task<IActionResult> SendEmail([FromBody] SendEmailCommandRequest sendEmailCommandRequest)
         {
             SendEmailCommandResponse response = await _mediator.Send(sendEmailCommandRequest);
             return response.Success ? Ok(response) : Conflict(new { message = response.Message });
         }
 
         [HttpPost]
-        public async Task<IActionResult> VerifyCode([FromQuery] VerifyCodeCommandRequest verifyCodeCommandRequest)
+        public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeCommandRequest verifyCodeCommandRequest)
         {
             VerifyCodeCommandResponse response = await _mediator.Send(verifyCodeCommandRequest);
             return response.Success ? Ok(response) : Conflict(new { message = response.Message });
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdatePassword([FromQuery] UpdatePasswordCommandRequest updatePasswordCommandRequest)
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordCommandRequest updatePasswordCommandRequest)
         {
             UpdatePasswordCommandResponse response = await _mediator.Send(updatePasswordCommandRequest);
             return response.Success ? Ok(response) : Conflict(new { message = response.Message });
@@ -66,7 +65,7 @@ namespace EventGoAPI.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            var response = await _mediator.Send(new LogoutCommandRequest {});
+            var response = await _mediator.Send(new LogoutCommandRequest { });
             return response.Success ? Ok(response) : BadRequest(response.Message);
         }
     }

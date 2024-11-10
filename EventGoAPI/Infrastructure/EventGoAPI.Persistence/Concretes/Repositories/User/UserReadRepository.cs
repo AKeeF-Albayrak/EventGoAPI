@@ -23,6 +23,11 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
 
         public DbSet<User> Table => _context.Set<User>();
 
+        public async Task<User> CheckLoginCredentials(string username, string password)
+        {
+            return await Table.FirstOrDefaultAsync(u => u.Username == username && u.PasswordHash == password);
+        }
+
         public async Task<User> CheckUserByUsernameEmailPhoneNumberAsync(string username, string email, string phoneNumber)
         {
             return await Table.FirstOrDefaultAsync(u => u.Username == username || u.Email == email || u.PhoneNumber == phoneNumber);

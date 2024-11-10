@@ -21,19 +21,10 @@ namespace EventGoAPI.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUserReadRepository _userReadRepository;
-        private readonly IUserWriteRepository _userWriteRepository;
-        private readonly IPasswordHasher _passwordHasher;
-        private readonly ITokenService _tokenService;
-        private readonly IEmailService _emailService;
         private readonly IMediator _mediator;
-        public AuthController(IUserReadRepository userReadRepository, IUserWriteRepository userWriteRepository, IPasswordHasher passwordHasher, ITokenService tokenService, IEmailService emailService, IMediator mediator)
+        public AuthController(IMediator mediator)
         {
-            _userWriteRepository = userWriteRepository;
-            _userReadRepository = userReadRepository;
-            _passwordHasher = passwordHasher;
-            _tokenService = tokenService;
-            _emailService = emailService;
+
             _mediator = mediator;
         }
 

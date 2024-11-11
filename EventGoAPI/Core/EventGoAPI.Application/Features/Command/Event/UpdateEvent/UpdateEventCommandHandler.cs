@@ -29,6 +29,14 @@ namespace EventGoAPI.Application.Features.Command.Event.UpdateEvent
                     Message = "Event not found."
                 };
             }
+            if(request.Date < DateTime.Now)
+            {
+                return new UpdateEventCommandResponse
+                {
+                    Success = false,
+                    Message = "Invalid Date"
+                };
+            }
 
             if (request.Name != null) existingEvent.Name = request.Name;
             if (request.Description != null) existingEvent.Description = request.Description;
@@ -40,7 +48,6 @@ namespace EventGoAPI.Application.Features.Command.Event.UpdateEvent
             if (request.Latitude != null) existingEvent.Latitude = request.Latitude.Value;
             if (request.Longitude != null) existingEvent.Longitude = request.Longitude.Value;
             if (request.Category != null) existingEvent.Category = request.Category.Value;
-            if (request.CreatedTime != null) existingEvent.CreatedTime = request.CreatedTime.Value;
 
             await _eventWriteRepository.UpdateAsync(existingEvent);
             await _eventWriteRepository.SaveChangesAsync();

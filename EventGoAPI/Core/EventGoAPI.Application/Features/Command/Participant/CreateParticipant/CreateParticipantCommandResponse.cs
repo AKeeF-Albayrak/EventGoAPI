@@ -8,7 +8,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
 {
     public class CreateParticipantCommandResponse
     {
-        public bool Succsess { get; set; }
+        public bool Success { get; set; }
         public string Message { get; set; }
     }
 }

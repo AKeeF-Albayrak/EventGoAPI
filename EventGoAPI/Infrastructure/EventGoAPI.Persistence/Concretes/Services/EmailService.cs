@@ -1,13 +1,9 @@
 ﻿using EventGoAPI.Application.Abstractions.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using EventGoAPI.Persistence.Context;
+using MimeKit;
+using MailKit.Net.Smtp;
+using System;
+using System.Threading.Tasks;
 
 namespace EventGoAPI.Persistence.Concretes.Services
 {
@@ -17,6 +13,7 @@ namespace EventGoAPI.Persistence.Concretes.Services
         private readonly int _smtpPort;
         private readonly string _smtpUser;
         private readonly string _smtpPass;
+
         public EmailService(IConfiguration configuration)
         {
             _smtpServer = configuration["SmtpSettings:SmtpServer"];
@@ -27,9 +24,14 @@ namespace EventGoAPI.Persistence.Concretes.Services
 
         public async Task SendEmailAsync(string to, string verificationCode)
         {
-            
-            string subject = "Doğrulama Kodu";
-            string body = $@"
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("EventGo", _smtpUser));
+            message.To.Add(new MailboxAddress("", to));
+            message.Subject = "Doğrulama Kodu";
+
+            message.Body = new TextPart("html")
+            {
+                Text = $@"
                     <html>
                     <head>
                         <style>
@@ -61,30 +63,20 @@ namespace EventGoAPI.Persistence.Concretes.Services
                             </div>
                         </div>
                     </body>
-                    </html>";
-
+                    </html>"
+            };
 
             try
             {
-                using var client = new SmtpClient(_smtpServer, _smtpPort)
-                {
-                    Credentials = new NetworkCredential(_smtpUser, _smtpPass),
-                    EnableSsl = true
-                };
-
-                var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(_smtpUser),
-                    Subject = subject,
-                    Body = body,
-                    IsBodyHtml = true
-                };
-                mailMessage.To.Add(to);
-                await client.SendMailAsync(mailMessage);
+                using var client = new SmtpClient();
+                await client.ConnectAsync(_smtpServer, _smtpPort, true);
+                await client.AuthenticateAsync(_smtpUser, _smtpPass);
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
             }
-            catch (SmtpException ex)
+            catch (Exception ex)
             {
-                Console.WriteLine($"SMTP Error: {ex.Message}");
+                Console.WriteLine($"Email sending error: {ex.Message}");
                 throw;
             }
         }

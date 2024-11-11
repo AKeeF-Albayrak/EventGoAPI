@@ -30,7 +30,19 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
         {
             if (_httpContextAccessor.HttpContext?.Items["UserId"] is not Guid userId)
             {
-                throw new UnauthorizedAccessException("User ID could not be found or is not a valid GUID.");
+                return new CreateEventCommandResponse
+                {
+                    Success = false,
+                    Message = "Invalid Id"
+                };
+            }
+            if(request.Date < DateTime.Now)
+            {
+                return new CreateEventCommandResponse
+                {
+                    Success = false,
+                    Message = "Invalid Date",
+                };
             }
             Guid eventId = Guid.NewGuid();
             var newEvent = new Domain.Entities.Event
@@ -57,8 +69,6 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
                 Id = userId
             };
 
-            
-
             await _eventWriteRepository.AddAsync(newEvent);
             await _participantWriteRepository.AddAsync(newParticipant);
 
@@ -77,6 +87,8 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
 
             var response = new CreateEventCommandResponse
             {
+                Success = true,
+                Message = "Event Added Successfully",
                 Name = newEvent.Name,
                 Description = newEvent.Description,
                 Date = newEvent.Date,

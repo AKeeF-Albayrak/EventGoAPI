@@ -29,7 +29,6 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
         }
         public async Task<CreateParticipantCommandResponse> Handle(CreateParticipantCommandRequest request, CancellationToken cancellationToken)
         {
-            //onaylanmamis evente katilamasin
             if (_httpContextAccessor.HttpContext?.Items["UserId"] is not Guid userId)
             {
                 throw new UnauthorizedAccessException("User ID could not be found or is not a valid GUID.");
@@ -46,8 +45,24 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
             {
                 return new CreateParticipantCommandResponse
                 {
-                   Succsess = false,
+                   Success = false,
                    Message = "Wrong Event Id!"
+                };
+            }
+            if (!test1.isApproved)
+            {
+                return new CreateParticipantCommandResponse
+                {
+                    Success = false,
+                    Message = "This Event Not Approved"
+                };
+            }
+            if(test1.Date < DateTime.Now)
+            {
+                return new CreateParticipantCommandResponse
+                {
+                    Success = false,
+                    Message = "This Event Ended!"
                 };
             }
 
@@ -55,7 +70,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
             {
                 return new CreateParticipantCommandResponse
                 {
-                    Succsess = false,
+                    Success = false,
                     Message = "You Are The Creator This Event!"
                 };
             }
@@ -65,7 +80,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
             {
                 return new CreateParticipantCommandResponse
                 {
-                    Succsess = false,
+                    Success = false,
                     Message = "Participant Already Exists"
                 };
             }
@@ -100,7 +115,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
 
             return new CreateParticipantCommandResponse()
             {
-                Succsess = true,
+                Success = true,
                 Message = "Participant Added Successfully"
             };
         }

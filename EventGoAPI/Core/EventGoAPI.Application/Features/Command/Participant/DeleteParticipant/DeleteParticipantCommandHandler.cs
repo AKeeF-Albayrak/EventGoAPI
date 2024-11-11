@@ -41,8 +41,16 @@ namespace EventGoAPI.Application.Features.Command.Participant.DeleteParticipant
             {
                 return new DeleteParticipantCommandResponse
                 {
-                    Succsess = false,
+                    Success = false,
                     Message = "Wrong EventId"
+                };
+            }
+            if(test1.Date < DateTime.Now)
+            {
+                return new DeleteParticipantCommandResponse
+                {
+                    Success = false,
+                    Message = "Event Ended"
                 };
             }
 
@@ -50,7 +58,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.DeleteParticipant
             {
                 return new DeleteParticipantCommandResponse
                 {
-                    Succsess = false,
+                    Success = false,
                     Message = "You Are The Creator This Event"
                 };
             }
@@ -60,7 +68,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.DeleteParticipant
             {
                 return new DeleteParticipantCommandResponse
                 {
-                    Succsess = false,
+                    Success = false,
                     Message = "Participant Already Not Exists!"
                 };
             }
@@ -70,7 +78,8 @@ namespace EventGoAPI.Application.Features.Command.Participant.DeleteParticipant
 
             return new DeleteParticipantCommandResponse
             {
-                Succsess = true
+                Success = true,
+                Message = "Joined Event"
             };
         }
     }

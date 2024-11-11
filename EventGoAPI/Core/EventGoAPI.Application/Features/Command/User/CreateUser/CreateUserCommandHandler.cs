@@ -53,7 +53,7 @@ namespace EventGoAPI.Application.Features.Command.User.CreateUser
                 PhoneNumber = request.PhoneNumber,
                 //Image = request.Image,
                 CreatedTime = DateTime.Now,
-                PasswordResetAuthorized = false
+                PasswordResetAuthorized = false,
             };
 
             await _userWriteRepository.AddAsync(user);

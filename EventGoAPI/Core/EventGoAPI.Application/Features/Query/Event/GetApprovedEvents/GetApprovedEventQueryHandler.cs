@@ -27,7 +27,7 @@ namespace EventGoAPI.Application.Features.Query.Event.GetApprovedEvents
             {
                 throw new UnauthorizedAccessException("User ID could not be found or is not a valid GUID.");
             }
-            var user = await _userReadRepository.GetEntityByIdAsync(userId.ToString());
+            var user = await _userReadRepository.GetEntityByIdAsync(userId);
             var events = await _eventReadRepository.GetAllEventsForUserAsync();
 
             var recommendedEvents = events

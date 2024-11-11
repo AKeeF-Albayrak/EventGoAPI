@@ -19,7 +19,7 @@ namespace EventGoAPI.Application.Features.Command.Event.UpdateEvent
         }
         public async Task<UpdateEventCommandResponse> Handle(UpdateEventCommandRequest request, CancellationToken cancellationToken)
         {
-            var existingEvent = await _eventReadRepository.GetEntityByIdAsync(request.Id.ToString());
+            var existingEvent = await _eventReadRepository.GetEntityByIdAsync(request.Id);
 
             if (existingEvent == null)
             {

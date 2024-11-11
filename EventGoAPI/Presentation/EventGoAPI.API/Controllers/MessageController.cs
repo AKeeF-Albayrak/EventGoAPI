@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Features.Command.Message.AddMessage;
+using EventGoAPI.Application.Features.Query.Message.GetEventMessages;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,5 +24,12 @@ namespace EventGoAPI.API.Controllers
             return response.Success ? Ok(response) : Unauthorized(response);
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetMessages([FromBody] GetEventMessagesRequest getEventMessagesRequest)
+        {
+            GetEventMessagesResponse response = await _mediator.Send(getEventMessagesRequest);
+            return response.Success ? Ok(response) : Conflict(response);
+        }
     }
 }

@@ -21,13 +21,9 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
 
         public async Task AddAsync(T entity) => await Table.AddAsync(entity);
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteAsync(Guid id)
         {
-            if (!Guid.TryParse(id, out Guid guidId))
-            {
-                throw new ArgumentException("Invalid GUID format", nameof(id));
-            }
-            var entity = await Table.FirstOrDefaultAsync(e => e.Id == guidId);
+            var entity = await Table.FirstOrDefaultAsync(e => e.Id == id);
 
             if (entity == null)
             {

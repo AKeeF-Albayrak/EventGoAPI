@@ -22,7 +22,7 @@ namespace EventGoAPI.Application.Features.Command.Event.ApproveEvent
         }
         public async Task<ApproveEventCommandResponse> Handle(ApproveEventCommandRequest request, CancellationToken cancellationToken)
         {
-            var _event = await _eventReadRepository.GetEntityByIdAsync(request.Id.ToString());
+            var _event = await _eventReadRepository.GetEntityByIdAsync(request.Id);
 
             if (_event == null)
             {

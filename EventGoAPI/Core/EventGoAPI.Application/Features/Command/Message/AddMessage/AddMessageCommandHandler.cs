@@ -33,7 +33,7 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
                 };
             }
 
-            var participant = await _participantReadRepository.GetEntityByIdAsync(userId.ToString(), request.EventId.ToString());
+            var participant = await _participantReadRepository.GetEntityByIdAsync(userId, request.EventId);
 
             if (participant == null)
             {

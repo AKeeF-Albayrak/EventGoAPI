@@ -9,5 +9,6 @@ namespace EventGoAPI.Application.Abstractions.Repositories
 {
     public interface IMessageReadRepository : IReadRepository<Message>
     {
+        public Task<ICollection<Message>> GetAllChatMessagesAsync(Guid eventId);
     }
 }

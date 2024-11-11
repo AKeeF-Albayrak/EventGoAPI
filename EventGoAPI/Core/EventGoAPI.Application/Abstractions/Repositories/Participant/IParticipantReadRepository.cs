@@ -9,7 +9,7 @@ namespace EventGoAPI.Application.Abstractions.Repositories
 {
     public interface IParticipantReadRepository : IReadRepository<Participant>
     {
-        public Task<Participant> GetEntityByIdAsync(string id, string eventId);
+        public Task<Participant> GetEntityByIdAsync(Guid id, Guid eventId);
         public Task<bool> HasNoParticipationAsync(Guid userId);
         Task<IEnumerable<Participant>> GetParticipantsByEventIdAsync(Guid eventId);
     }

@@ -9,7 +9,7 @@ namespace EventGoAPI.Application.Abstractions.Repositories
 {
     public interface IReadRepository<T> : IRepository<T> where T : BaseEntity
     {
-        Task<T> GetEntityByIdAsync(string id);
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<T> GetEntityByIdAsync(Guid id);
+        Task<ICollection<T>> GetAllAsync();
     }
 }

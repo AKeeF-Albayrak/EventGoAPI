@@ -35,7 +35,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.DeleteParticipant
                 Id = userId,
                 EventId = request.EventId,
             };
-            var test1 = await _eventReadRepository.GetEntityByIdAsync(request.EventId.ToString());
+            var test1 = await _eventReadRepository.GetEntityByIdAsync(request.EventId);
 
             if(test1 == null)
             {
@@ -63,7 +63,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.DeleteParticipant
                 };
             }
 
-            var test2 = await _participantReadRepository.GetEntityByIdAsync(userId.ToString(), request.EventId.ToString());
+            var test2 = await _participantReadRepository.GetEntityByIdAsync(userId, request.EventId);
             if(test2 == null)
             {
                 return new DeleteParticipantCommandResponse

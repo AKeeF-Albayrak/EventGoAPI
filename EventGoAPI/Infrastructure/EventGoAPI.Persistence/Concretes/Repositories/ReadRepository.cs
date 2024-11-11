@@ -2,6 +2,7 @@
 using EventGoAPI.Domain.Entities.Common;
 using EventGoAPI.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,19 +22,8 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
 
         public DbSet<T> Table => _context.Set<T>();
 
-        public async Task<IEnumerable<T>> GetAllAsync()
-        {
-            return await Table.ToListAsync();
-        }
+        public async Task<ICollection<T>> GetAllAsync() => await Table.ToListAsync();
 
-        public async Task<T> GetEntityByIdAsync(string id)
-        {
-            if (!Guid.TryParse(id, out Guid guidId))
-            {
-                throw new ArgumentException("Invalid ID format", nameof(id));
-            }
-
-            return await Table.FindAsync(guidId);
-        }
+        public async Task<T> GetEntityByIdAsync(Guid id) => await Table.FindAsync(id);
     }
 }

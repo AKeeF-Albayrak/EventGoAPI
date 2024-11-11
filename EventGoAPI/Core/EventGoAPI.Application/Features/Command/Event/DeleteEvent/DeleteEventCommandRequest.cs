@@ -9,6 +9,6 @@ namespace EventGoAPI.Application.Features.Command.Event.DeleteEvent
 {
     public class DeleteEventCommandRequest : IRequest<DeleteEventCommandResponse>
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

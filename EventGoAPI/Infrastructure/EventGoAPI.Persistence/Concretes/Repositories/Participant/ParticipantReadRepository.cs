@@ -22,14 +22,9 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
 
         public DbSet<Participant> Table => _context.Set<Participant>();
 
-        public async Task<Participant> GetEntityByIdAsync(string id, string eventId)
+        public async Task<Participant> GetEntityByIdAsync(Guid id, Guid eventId)
         {
-            if (!Guid.TryParse(id, out Guid guidId) || !Guid.TryParse(eventId, out Guid guidEventId))
-            {
-                throw new ArgumentException("Invalid ID format");
-            }
-
-            return await Table.FindAsync(guidId, guidEventId);
+            return await Table.FindAsync(id, eventId);
         }
 
         public async Task<IEnumerable<Participant>> GetParticipantsByEventIdAsync(Guid eventId)

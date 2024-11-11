@@ -53,7 +53,7 @@ namespace EventGoAPI.Application.Features.Command.Event.DeleteEvent
             var participants = await _participantReadRepository.GetParticipantsByEventIdAsync(_event.Id);
             foreach (var participant in participants)
             {
-                await _participantWriteRepository.DeleteAsync(participant.Id.ToString());
+                await _participantWriteRepository.DeleteAsync(participant.Id);
             }
             await _participantWriteRepository.SaveChangesAsync();
 

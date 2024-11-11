@@ -21,7 +21,7 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
 
         public DbSet<Event> Table => _context.Set<Event>();
 
-        public async Task<IEnumerable<Event>> GetAllEventsAsync()
+        public async Task<ICollection<Event>> GetAllEventsAsync()
         {
             return await Table
                 .Include(e => e.Participants)
@@ -29,7 +29,7 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Event>> GetAllEventsForUserAsync() => await Table.Where(entity => EF.Property<bool>(entity, "isApproved")).ToListAsync();
+        public async Task<ICollection<Event>> GetAllEventsForUserAsync() => await Table.Where(entity => EF.Property<bool>(entity, "isApproved")).ToListAsync();
 
         public async Task<List<Event>> GetUserPastEvents(Guid userId)
         {

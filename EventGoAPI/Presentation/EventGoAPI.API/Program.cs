@@ -5,11 +5,11 @@ using EventGoAPI.Application.Abstractions.Services;
 using EventGoAPI.Persistence;
 using Microsoft.OpenApi.Models;
 using EventGoAPI.Persistence.Concretes.Services;
-using EventGoAPI.API.Hubs;
 using System.IdentityModel.Tokens.Jwt;
 using EventGoAPI.API.Middlewares;
 using EventGoAPI.Application;
-using EventGoAPI.Application.Abstractions.Hubs;
+using EventGoAPI.Infrastructure.Hubs;
+using EventGoAPI.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +24,7 @@ builder.Services.AddCors(options =>
 
 builder.Configuration.AddUserSecrets<Program>();
 
-builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<INotificationsHub, NotificationsHub>();
+builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices();
 builder.Services.AddSignalR();

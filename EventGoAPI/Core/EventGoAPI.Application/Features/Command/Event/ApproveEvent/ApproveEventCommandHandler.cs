@@ -1,5 +1,5 @@
-﻿using EventGoAPI.Application.Abstractions.Hubs;
-using EventGoAPI.Application.Abstractions.Repositories;
+﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Abstractions.Services;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -13,12 +13,12 @@ namespace EventGoAPI.Application.Features.Command.Event.ApproveEvent
     {
         private IEventWriteRepository _eventWriteRepository;
         private IEventReadRepository _eventReadRepository;
-        private readonly INotificationsHub _notificationsHub;
-        public ApproveEventCommandHandler(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, INotificationsHub notificationsHub)
+        private readonly INotificationService _notificationService;
+        public ApproveEventCommandHandler(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, INotificationService notificationService)
         {
             _eventWriteRepository = eventWriteRepository;
             _eventReadRepository = eventReadRepository;
-            _notificationsHub = notificationsHub;
+            _notificationService = notificationService;
         }
         public async Task<ApproveEventCommandResponse> Handle(ApproveEventCommandRequest request, CancellationToken cancellationToken)
         {
@@ -42,15 +42,15 @@ namespace EventGoAPI.Application.Features.Command.Event.ApproveEvent
                 };
             }
 
-            _event.isApproved = true;
-            await _eventWriteRepository.UpdateAsync(_event);
-            await _eventWriteRepository.SaveChangesAsync();
-
             if (!string.IsNullOrEmpty(_event.CreatedById.ToString()))
             {
                 var notificationMessage = $"Your event '{_event.Name}' has been approved!";
-                await _notificationsHub.SendNotificationAsync(_event.CreatedById.ToString(), notificationMessage);
+                await _notificationService.SendNotificationAsync(_event.CreatedById.ToString(), notificationMessage);
             }
+
+            _event.isApproved = true;
+            await _eventWriteRepository.UpdateAsync(_event);
+            await _eventWriteRepository.SaveChangesAsync();
 
             return new ApproveEventCommandResponse
             {

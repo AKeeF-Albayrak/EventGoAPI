@@ -20,7 +20,7 @@ namespace EventGoAPI.API.Controllers
         public async Task<IActionResult> SendMessage([FromBody] AddMessageCommandRequest addMessageCommandRequest)
         {
             AddMessageCommandResponse response = await _mediator.Send(addMessageCommandRequest);
-            return Ok(response);
+            return response.Success ? Ok(response) : Unauthorized(response);
         }
 
     }

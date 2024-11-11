@@ -14,17 +14,34 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
     public class AddMessageCommandHandler : IRequestHandler<AddMessageCommandRequest, AddMessageCommandResponse>
     {
         private IMessageWriteRepository _messageWriteRepository;
+        private IParticipantReadRepository _participantReadRepository;
         private IHttpContextAccessor _httpContextAccessor;
-        public AddMessageCommandHandler(IMessageWriteRepository messageWriteRepository, IHttpContextAccessor httpContextAccessor)
+        public AddMessageCommandHandler(IMessageWriteRepository messageWriteRepository, IHttpContextAccessor httpContextAccessor, IParticipantReadRepository participantReadRepository)
         {
             _messageWriteRepository = messageWriteRepository;
             _httpContextAccessor = httpContextAccessor;
+            _participantReadRepository = participantReadRepository;
         }
         public async Task<AddMessageCommandResponse> Handle(AddMessageCommandRequest request, CancellationToken cancellationToken)
         {
             if (_httpContextAccessor.HttpContext?.Items["UserId"] is not Guid userId)
             {
-                throw new UnauthorizedAccessException("User ID could not be found or is not a valid GUID.");
+                return new AddMessageCommandResponse
+                {
+                    Success = false,
+                    Message = "Unvalid Id"
+                };
+            }
+
+            var participant = await _participantReadRepository.GetEntityByIdAsync(userId.ToString(), request.EventId.ToString());
+
+            if (participant == null)
+            {
+                return new AddMessageCommandResponse
+                {
+                    Success = false,
+                    Message = "Unauthorized"
+                };
             }
 
             var message = new Domain.Entities.Message

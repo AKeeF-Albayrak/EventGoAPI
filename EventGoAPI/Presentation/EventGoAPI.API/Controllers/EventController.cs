@@ -1,5 +1,4 @@
-﻿using EventGoAPI.API.Hubs;
-using EventGoAPI.Application.Abstractions.Repositories;
+﻿using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
 using EventGoAPI.Application.Dtos.EventDtos;
 using EventGoAPI.Application.Features.Command.Event.ApproveEvent;

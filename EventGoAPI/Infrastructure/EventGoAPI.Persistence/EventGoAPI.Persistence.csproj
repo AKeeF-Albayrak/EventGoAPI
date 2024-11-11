@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\EventGoAPI.Application\EventGoAPI.Application.csproj" />
     <ProjectReference Include="..\..\Core\EventGoAPI.Domain\EventGoAPI.Domain.csproj" />
+    <ProjectReference Include="..\EventGoAPI.Infrastructure\EventGoAPI.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

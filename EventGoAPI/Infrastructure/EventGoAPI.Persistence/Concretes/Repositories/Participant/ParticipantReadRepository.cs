@@ -32,6 +32,13 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
             return await Table.FindAsync(guidId, guidEventId);
         }
 
+        public async Task<IEnumerable<Participant>> GetParticipantsByEventIdAsync(Guid eventId)
+        {
+            return await _context.Set<Participant>()
+                                 .Where(p => p.EventId == eventId)
+                                 .ToListAsync();
+        }
+
         public async Task<bool> HasNoParticipationAsync(Guid userId)
         {
             return await Table

@@ -15,16 +15,19 @@ namespace EventGoAPI.Application.Features.Command.Event.DeleteEvent
     {
         private IEventWriteRepository _eventWriteRepository;
         private IEventReadRepository _eventReadRepository;
+        private IParticipantWriteRepository _participantWriteRepository;
+        private IParticipantReadRepository _participantReadRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public DeleteEventCommandHandler(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, IHttpContextAccessor httpContextAccessor)
+        public DeleteEventCommandHandler(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, IHttpContextAccessor httpContextAccessor, IParticipantWriteRepository participantWriteRepository, IParticipantReadRepository participantReadRepository)
         {
             _eventWriteRepository = eventWriteRepository;
             _eventReadRepository = eventReadRepository;
+            _participantWriteRepository = participantWriteRepository;
+            _participantReadRepository = participantReadRepository;
             _httpContextAccessor = httpContextAccessor;
         }
         public async Task<DeleteEventCommandResponse> Handle(DeleteEventCommandRequest request, CancellationToken cancellationToken)
         {
-            //puan silme
             var _event = await _eventReadRepository.GetEntityByIdAsync(request.Id);
 
             if (_httpContextAccessor.HttpContext?.Items["UserId"] is not Guid userId)
@@ -46,6 +49,13 @@ namespace EventGoAPI.Application.Features.Command.Event.DeleteEvent
             {
                 throw new UnauthorizedAccessException($"User {userId} deneme {_event.CreatedById} does not have permission to delete this event.");
             }
+
+            var participants = await _participantReadRepository.GetParticipantsByEventIdAsync(_event.Id);
+            foreach (var participant in participants)
+            {
+                await _participantWriteRepository.DeleteAsync(participant.Id.ToString());
+            }
+            await _participantWriteRepository.SaveChangesAsync();
 
             await _eventWriteRepository.DeleteAsync(request.Id);
             await _eventWriteRepository.SaveChangesAsync();

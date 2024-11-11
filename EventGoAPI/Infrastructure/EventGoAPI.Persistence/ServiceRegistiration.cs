@@ -37,6 +37,9 @@ namespace EventGoAPI.Persistence
             services.AddScoped<IPointReadRepository, PointReadRepository>();
             services.AddScoped<IPointWriteRepository, PointWriteRepository>();
 
+            services.AddScoped<IMessageReadRepository, MessageReadRepository>();
+            services.AddScoped<IMessageWriteRepository, MessageWriteRepository>();
+
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddSingleton<ITokenService, TokenService>();
             services.AddScoped<IEmailService, EmailService>();

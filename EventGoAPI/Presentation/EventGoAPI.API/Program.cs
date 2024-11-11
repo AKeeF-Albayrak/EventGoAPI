@@ -126,6 +126,7 @@ app.UseAuthorization();
 
 app.UseMiddleware<TokenMiddleware>();
 app.UseMiddleware<TokenBlacklistMiddleware>();
+app.UseMiddleware<RateLimitingMiddleware>();
 
 app.MapControllers();
 

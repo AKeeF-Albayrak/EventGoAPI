@@ -25,6 +25,12 @@ namespace EventGoAPI.Persistence.Context
                 .HasOne(p => p.User)
                 .WithMany(u => u.Points)
                 .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Domain.Entities.Point>()
+                .HasOne(p => p.Event)
+                .WithMany(e => e.Points)
+                .HasForeignKey(p => p.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Participant>()
@@ -36,11 +42,17 @@ namespace EventGoAPI.Persistence.Context
                 .HasForeignKey(p => p.Id)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Domain.Entities.Point>()
+                .HasOne<Participant>()
+                .WithMany()
+                .HasForeignKey(p => new { p.UserId, p.EventId })
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Participant>()
                 .HasOne(p => p.Event)
                 .WithMany(e => e.Participants)
                 .HasForeignKey(p => p.EventId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Sender)
@@ -60,5 +72,7 @@ namespace EventGoAPI.Persistence.Context
                 .HasForeignKey(e => e.CreatedById)
                 .OnDelete(DeleteBehavior.Restrict);
         }
+
+
     }
 }

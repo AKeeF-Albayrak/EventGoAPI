@@ -28,10 +28,10 @@ namespace EventGoAPI.Domain.Entities
         public byte[]? Image { get; set; }
         public DateTime CreatedTime { get; set; }
 
-        public List<Point> Points { get; set; }
-        public List<Event> Events { get; set; }
-        public List<Message> Messages { get; set; }
-        public List<Participant> Participants { get; set; }
+        public List<Point>? Points { get; set; }
+        public List<Event>? Events { get; set; }
+        public List<Message>? Messages { get; set; }
+        public List<Participant>? Participants { get; set; }
 
         public string? VerificationCode { get; set; }
         public DateTime? VerificationCodeExpiration { get; set; }

@@ -10,11 +10,15 @@ namespace EventGoAPI.Domain.Entities
 {
     public class Point : BaseEntity
     {
-
         public Guid UserId { get; set; }
+        public Guid EventId { get; set; }
         public int Score { get; set; }
         public DateTime Date { get; set; }
         [JsonIgnore]
-        public User User { get; set; }
+        public User? User { get; set; }
+        [JsonIgnore]
+        public Event? Event { get; set; }
+        [JsonIgnore]
+        public Participant? Participant { get; set; }
     }
 }

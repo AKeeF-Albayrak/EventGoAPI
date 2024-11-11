@@ -17,16 +17,17 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
         private IEventWriteRepository _eventWriteRepository;
         private IParticipantWriteRepository _participantWriteRepository;
         private IHttpContextAccessor _httpContextAccessor;
-        public CreateEventCommandHandler(IEventWriteRepository eventWriteRepository, IParticipantWriteRepository participantWriteRepository, IHttpContextAccessor httpContextAccessor)
+        private IPointWriteRepository _pointWriteRepository;
+        public CreateEventCommandHandler(IEventWriteRepository eventWriteRepository, IParticipantWriteRepository participantWriteRepository, IHttpContextAccessor httpContextAccessor, IPointWriteRepository pointWriteRepository)
         {
             _eventWriteRepository = eventWriteRepository;
             _participantWriteRepository = participantWriteRepository;
             _httpContextAccessor = httpContextAccessor;
+            _pointWriteRepository = pointWriteRepository;
         }
 
         public async Task<CreateEventCommandResponse> Handle(CreateEventCommandRequest request, CancellationToken cancellationToken)
         {
-            //puan ekleme
             if (_httpContextAccessor.HttpContext?.Items["UserId"] is not Guid userId)
             {
                 throw new UnauthorizedAccessException("User ID could not be found or is not a valid GUID.");
@@ -56,11 +57,23 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
                 Id = userId
             };
 
+            
+
             await _eventWriteRepository.AddAsync(newEvent);
+            await _participantWriteRepository.AddAsync(newParticipant);
+
             await _eventWriteRepository.SaveChangesAsync();
 
-            await _participantWriteRepository.AddAsync(newParticipant);
-            await _participantWriteRepository.SaveChangesAsync();
+            var newPoint = new Point
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                EventId = eventId,
+                Score = 15,
+                Date = DateTime.Now,
+            };
+            await _pointWriteRepository.AddAsync(newPoint);
+            await _pointWriteRepository.SaveChangesAsync();
 
             var response = new CreateEventCommandResponse
             {
@@ -75,7 +88,8 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
                 Longitude = newEvent.Longitude,
                 Category = newEvent.Category,
                 CreatedTime = newEvent.CreatedTime,
-                isApproved = newEvent.isApproved
+                isApproved = newEvent.isApproved,
+                Point = newPoint.Score,
             };
 
             return response;

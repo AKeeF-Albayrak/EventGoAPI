@@ -35,22 +35,33 @@ namespace EventGoAPI.Application.Features.Command.Participant.DeleteParticipant
                 Id = userId,
                 EventId = request.EventId,
             };
+            var test1 = await _eventReadRepository.GetEntityByIdAsync(request.EventId.ToString());
 
-            var test1 = await _participantReadRepository.GetEntityByIdAsync(userId.ToString(), request.EventId.ToString());
             if(test1 == null)
             {
                 return new DeleteParticipantCommandResponse
                 {
-                    Succsess = false
+                    Succsess = false,
+                    Message = "Wrong EventId"
                 };
             }
 
-            var test2 = await _eventReadRepository.GetEntityByIdAsync(request.EventId.ToString());
-            if(test2.CreatedById == userId)
+            if (test1.CreatedById == userId)
             {
                 return new DeleteParticipantCommandResponse
                 {
-                    Succsess = false
+                    Succsess = false,
+                    Message = "You Are The Creator This Event"
+                };
+            }
+
+            var test2 = await _participantReadRepository.GetEntityByIdAsync(userId.ToString(), request.EventId.ToString());
+            if(test2 == null)
+            {
+                return new DeleteParticipantCommandResponse
+                {
+                    Succsess = false,
+                    Message = "Participant Already Not Exists!"
                 };
             }
 

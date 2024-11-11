@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventGoAPI.Persistence.Migrations
 {
     [DbContext(typeof(EventGoDbContext))]
-    [Migration("20241108205344_mig_2")]
+    [Migration("20241111010613_mig_2")]
     partial class mig_2
     {
         /// <inheritdoc />
@@ -115,15 +115,15 @@ namespace EventGoAPI.Persistence.Migrations
 
             modelBuilder.Entity("EventGoAPI.Domain.Entities.Participant", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id", "EventId");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("EventId");
+                    b.HasKey("EventId", "Id");
+
+                    b.HasIndex("Id");
 
                     b.ToTable("Participants");
                 });
@@ -137,6 +137,15 @@ namespace EventGoAPI.Persistence.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ParticipantEventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ParticipantId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
@@ -145,7 +154,11 @@ namespace EventGoAPI.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("ParticipantEventId", "ParticipantId");
+
+                    b.HasIndex("UserId", "EventId");
 
                     b.ToTable("Points");
                 });
@@ -269,7 +282,7 @@ namespace EventGoAPI.Persistence.Migrations
                     b.HasOne("EventGoAPI.Domain.Entities.Event", "Event")
                         .WithMany("Participants")
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("EventGoAPI.Domain.Entities.User", "User")
@@ -285,11 +298,31 @@ namespace EventGoAPI.Persistence.Migrations
 
             modelBuilder.Entity("EventGoAPI.Domain.Entities.Point", b =>
                 {
+                    b.HasOne("EventGoAPI.Domain.Entities.Event", "Event")
+                        .WithMany("Points")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("EventGoAPI.Domain.Entities.User", "User")
                         .WithMany("Points")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("EventGoAPI.Domain.Entities.Participant", "Participant")
+                        .WithMany("Points")
+                        .HasForeignKey("ParticipantEventId", "ParticipantId");
+
+                    b.HasOne("EventGoAPI.Domain.Entities.Participant", null)
+                        .WithMany()
+                        .HasForeignKey("UserId", "EventId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("Participant");
 
                     b.Navigation("User");
                 });
@@ -299,6 +332,13 @@ namespace EventGoAPI.Persistence.Migrations
                     b.Navigation("Messages");
 
                     b.Navigation("Participants");
+
+                    b.Navigation("Points");
+                });
+
+            modelBuilder.Entity("EventGoAPI.Domain.Entities.Participant", b =>
+                {
+                    b.Navigation("Points");
                 });
 
             modelBuilder.Entity("EventGoAPI.Domain.Entities.User", b =>

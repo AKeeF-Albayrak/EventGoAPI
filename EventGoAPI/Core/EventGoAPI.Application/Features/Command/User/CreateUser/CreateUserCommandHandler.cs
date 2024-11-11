@@ -50,6 +50,7 @@ namespace EventGoAPI.Application.Features.Command.User.CreateUser
                 Surname = request.Surname,
                 BirthDate = request.BirthDate,
                 Gender = request.Gender,
+                PhoneNumber = request.PhoneNumber,
                 //Image = request.Image,
                 CreatedTime = DateTime.Now,
                 PasswordResetAuthorized = false

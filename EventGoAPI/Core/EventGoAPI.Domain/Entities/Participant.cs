@@ -15,5 +15,7 @@ namespace EventGoAPI.Domain.Entities
         public User? User { get; set; }
         [JsonIgnore]
         public Event? Event { get; set; }
+        [JsonIgnore]
+        public ICollection<Point>? Points { get; set; }
     }
 }

@@ -23,5 +23,6 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
         //public byte[]? Image { get; set; }
         public DateTime CreatedTime { get; set; }
         public bool isApproved { get; set; }
+        public int Point { get; set; }  
     }
 }

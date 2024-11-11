@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventGoAPI.Application.Abstractions.Repositories
 {
-    public interface IParticipantReadRepository : IReadRepository<Participant>
+    public interface IPointWriteRepository : IWriteRepository<Point>
     {
-        public Task<Participant> GetEntityByIdAsync(string id, string eventId);
-        public Task<bool> HasNoParticipationAsync(Guid userId);
     }
 }

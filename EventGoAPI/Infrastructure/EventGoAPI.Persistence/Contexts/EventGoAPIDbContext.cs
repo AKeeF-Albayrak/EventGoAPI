@@ -21,6 +21,57 @@ namespace EventGoAPI.Persistence.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Participant>()
+                .HasKey(p => new { p.Id, p.EventId });
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Events)
+                .WithOne(e => e.CreatedBy)
+                .HasForeignKey(e => e.CreatedById)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Participants)
+                .WithOne(p => p.User)
+                .HasForeignKey(p => p.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Event>()
+                .HasMany(e => e.Messages)
+                .WithOne(m => m.Event)
+                .HasForeignKey(m => m.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Event>()
+                .HasMany(e => e.Points)
+                .WithOne(p => p.Event)
+                .HasForeignKey(p => p.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Event>()
+                .HasMany(e => e.Participants)
+                .WithOne(p => p.Event)
+                .HasForeignKey(p => p.EventId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany(u => u.Messages)
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Participant>()
+                .HasOne(p => p.User)
+                .WithMany(u => u.Participants)
+                .HasForeignKey(p => p.Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Domain.Entities.Point>()
+                .HasOne(p => p.Participant)
+                .WithMany(part => part.Points)
+                .HasForeignKey(p => new { p.UserId, p.EventId })
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Domain.Entities.Point>()
                 .HasOne(p => p.User)
                 .WithMany(u => u.Points)
@@ -32,46 +83,8 @@ namespace EventGoAPI.Persistence.Context
                 .WithMany(e => e.Points)
                 .HasForeignKey(p => p.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Participant>()
-                .HasKey(p => new { p.Id, p.EventId });
-
-            modelBuilder.Entity<Participant>()
-                .HasOne(p => p.User)
-                .WithMany(u => u.Participants)
-                .HasForeignKey(p => p.Id)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Domain.Entities.Point>()
-                .HasOne<Participant>()
-                .WithMany()
-                .HasForeignKey(p => new { p.UserId, p.EventId })
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Participant>()
-                .HasOne(p => p.Event)
-                .WithMany(e => e.Participants)
-                .HasForeignKey(p => p.EventId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.Sender)
-                .WithMany(u => u.Messages)
-                .HasForeignKey(m => m.SenderId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.Event)
-                .WithMany(e => e.Messages)
-                .HasForeignKey(m => m.EventId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Event>()
-                .HasOne(e => e.CreatedBy)
-                .WithMany(u => u.Events)
-                .HasForeignKey(e => e.CreatedById)
-                .OnDelete(DeleteBehavior.Restrict);
         }
+
 
 
     }

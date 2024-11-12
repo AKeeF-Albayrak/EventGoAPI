@@ -73,7 +73,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.DeleteParticipant
                 };
             }
 
-            await _participantWriteRepository.DeleteAsync(userId.ToString(), request.EventId.ToString());
+            await _participantWriteRepository.DeleteAsync(userId, request.EventId);
             await _participantWriteRepository.SaveChangesAsync();
 
             return new DeleteParticipantCommandResponse

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventGoAPI.Persistence.Migrations
 {
     [DbContext(typeof(EventGoDbContext))]
-    [Migration("20241111010613_mig_2")]
-    partial class mig_2
+    [Migration("20241112121308_mig_1")]
+    partial class mig_1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -115,15 +115,15 @@ namespace EventGoAPI.Persistence.Migrations
 
             modelBuilder.Entity("EventGoAPI.Domain.Entities.Participant", b =>
                 {
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("EventId", "Id");
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("Id");
+                    b.HasKey("Id", "EventId");
+
+                    b.HasIndex("EventId");
 
                     b.ToTable("Participants");
                 });
@@ -140,12 +140,6 @@ namespace EventGoAPI.Persistence.Migrations
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ParticipantEventId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ParticipantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
@@ -155,8 +149,6 @@ namespace EventGoAPI.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
-
-                    b.HasIndex("ParticipantEventId", "ParticipantId");
 
                     b.HasIndex("UserId", "EventId");
 
@@ -252,7 +244,7 @@ namespace EventGoAPI.Persistence.Migrations
                     b.HasOne("EventGoAPI.Domain.Entities.User", "CreatedBy")
                         .WithMany("Events")
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CreatedBy");
@@ -312,12 +304,8 @@ namespace EventGoAPI.Persistence.Migrations
 
                     b.HasOne("EventGoAPI.Domain.Entities.Participant", "Participant")
                         .WithMany("Points")
-                        .HasForeignKey("ParticipantEventId", "ParticipantId");
-
-                    b.HasOne("EventGoAPI.Domain.Entities.Participant", null)
-                        .WithMany()
                         .HasForeignKey("UserId", "EventId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Event");

@@ -137,12 +137,6 @@ namespace EventGoAPI.Persistence.Migrations
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ParticipantEventId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ParticipantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
@@ -152,8 +146,6 @@ namespace EventGoAPI.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
-
-                    b.HasIndex("ParticipantId", "ParticipantEventId");
 
                     b.HasIndex("UserId", "EventId");
 
@@ -249,7 +241,7 @@ namespace EventGoAPI.Persistence.Migrations
                     b.HasOne("EventGoAPI.Domain.Entities.User", "CreatedBy")
                         .WithMany("Events")
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("CreatedBy");
@@ -309,10 +301,6 @@ namespace EventGoAPI.Persistence.Migrations
 
                     b.HasOne("EventGoAPI.Domain.Entities.Participant", "Participant")
                         .WithMany("Points")
-                        .HasForeignKey("ParticipantId", "ParticipantEventId");
-
-                    b.HasOne("EventGoAPI.Domain.Entities.Participant", null)
-                        .WithMany()
                         .HasForeignKey("UserId", "EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

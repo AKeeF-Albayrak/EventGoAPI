@@ -9,6 +9,6 @@ namespace EventGoAPI.Application.Abstractions.Repositories
 {
     public interface IParticipantWriteRepository : IWriteRepository<Participant>
     {
-        public Task DeleteAsync(string id, string eventId);
+        public Task DeleteAsync(Guid id, Guid eventId);
     }
 }

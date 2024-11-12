@@ -71,7 +71,7 @@ namespace EventGoAPI.Persistence.Migrations
                         column: x => x.CreatedById,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,7 +110,7 @@ namespace EventGoAPI.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Participants", x => new { x.EventId, x.Id });
+                    table.PrimaryKey("PK_Participants", x => new { x.Id, x.EventId });
                     table.ForeignKey(
                         name: "FK_Participants_Events_EventId",
                         column: x => x.EventId,
@@ -133,9 +133,7 @@ namespace EventGoAPI.Persistence.Migrations
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Score = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ParticipantEventId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ParticipantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -147,16 +145,11 @@ namespace EventGoAPI.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Points_Participants_ParticipantEventId_ParticipantId",
-                        columns: x => new { x.ParticipantEventId, x.ParticipantId },
-                        principalTable: "Participants",
-                        principalColumns: new[] { "EventId", "Id" });
-                    table.ForeignKey(
                         name: "FK_Points_Participants_UserId_EventId",
                         columns: x => new { x.UserId, x.EventId },
                         principalTable: "Participants",
-                        principalColumns: new[] { "EventId", "Id" },
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumns: new[] { "Id", "EventId" },
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Points_Users_UserId",
                         column: x => x.UserId,
@@ -181,19 +174,14 @@ namespace EventGoAPI.Persistence.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Participants_Id",
+                name: "IX_Participants_EventId",
                 table: "Participants",
-                column: "Id");
+                column: "EventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Points_EventId",
                 table: "Points",
                 column: "EventId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Points_ParticipantEventId_ParticipantId",
-                table: "Points",
-                columns: new[] { "ParticipantEventId", "ParticipantId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Points_UserId_EventId",

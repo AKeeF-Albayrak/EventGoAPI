@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Enums;
 using EventGoAPI.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -33,17 +34,21 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
                 return new CreateEventCommandResponse
                 {
                     Success = false,
-                    Message = "Invalid Id"
+                    Message = "Invalid Id",
+                    ResponseType = ResponseType.ValidationError
                 };
             }
-            if(request.Date < DateTime.Now)
+
+            if (request.Date < DateTime.Now)
             {
                 return new CreateEventCommandResponse
                 {
                     Success = false,
                     Message = "Invalid Date",
+                    ResponseType = ResponseType.ValidationError
                 };
             }
+
             Guid eventId = Guid.NewGuid();
             var newEvent = new Domain.Entities.Event
             {
@@ -85,10 +90,11 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
             await _pointWriteRepository.AddAsync(newPoint);
             await _pointWriteRepository.SaveChangesAsync();
 
-            var response = new CreateEventCommandResponse
+            return new CreateEventCommandResponse
             {
                 Success = true,
                 Message = "Event Added Successfully",
+                ResponseType = ResponseType.Success,
                 Name = newEvent.Name,
                 Description = newEvent.Description,
                 Date = newEvent.Date,
@@ -101,10 +107,8 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
                 Category = newEvent.Category,
                 CreatedTime = newEvent.CreatedTime,
                 isApproved = newEvent.isApproved,
-                Point = newPoint.Score,
+                Point = newPoint.Score
             };
-
-            return response;
         }
     }
 }

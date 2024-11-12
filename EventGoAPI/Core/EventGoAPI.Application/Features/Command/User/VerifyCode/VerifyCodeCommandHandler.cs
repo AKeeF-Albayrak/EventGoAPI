@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Enums;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -23,12 +24,22 @@ namespace EventGoAPI.Application.Features.Command.User.VerifyCode
 
             if (user == null)
             {
-                return new VerifyCodeCommandResponse { Success = false, Message = "User not found." };
+                return new VerifyCodeCommandResponse
+                {
+                    Success = false,
+                    Message = "User not found.",
+                    ResponseType = ResponseType.NotFound
+                };
             }
 
             if (user.VerificationCodeExpiration < DateTime.Now || user.VerificationCode != request.EnteredCode)
             {
-                return new VerifyCodeCommandResponse { Success = false, Message = "Invalid or expired verification code." };
+                return new VerifyCodeCommandResponse
+                {
+                    Success = false,
+                    Message = "Invalid or expired verification code.",
+                    ResponseType = ResponseType.ValidationError
+                };
             }
 
             user.VerificationCode = null;
@@ -39,7 +50,12 @@ namespace EventGoAPI.Application.Features.Command.User.VerifyCode
             await _userWriteRepository.UpdateAsync(user);
             await _userWriteRepository.SaveChangesAsync();
 
-            return new VerifyCodeCommandResponse { Success = true, Message = "Verification successful." };
+            return new VerifyCodeCommandResponse
+            {
+                Success = true,
+                Message = "Verification successful.",
+                ResponseType = ResponseType.Success
+            };
         }
     }
 }

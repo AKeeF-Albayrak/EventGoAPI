@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Enums;
 using EventGoAPI.Application.Features.Command.Event.CreateEvent;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -29,28 +30,34 @@ namespace EventGoAPI.Application.Features.Query.Message.GetEventMessages
 
             if (_event == null)
             {
-                return new GetEventMessagesResponse{
+                return new GetEventMessagesResponse
+                {
                     Success = false,
                     Message = "Invalid Id",
+                    ResponseType = ResponseType.NotFound,
                     Messages = null
                 };
             }
+
             if (_httpContextAccessor.HttpContext?.Items["UserId"] is not Guid userId)
             {
                 return new GetEventMessagesResponse
                 {
                     Success = false,
-                    Message = "Invalid Id"
+                    Message = "Invalid Id",
+                    ResponseType = ResponseType.ValidationError
                 };
             }
-            var participant = await _participantReadRepository.GetEntityByIdAsync( userId, request.EventId);
+
+            var participant = await _participantReadRepository.GetEntityByIdAsync(userId, request.EventId);
 
             if (participant == null)
             {
                 return new GetEventMessagesResponse
                 {
                     Success = false,
-                    Message = "Unauthorized!"
+                    Message = "Unauthorized!",
+                    ResponseType = ResponseType.Unauthorized
                 };
             }
 
@@ -60,6 +67,7 @@ namespace EventGoAPI.Application.Features.Query.Message.GetEventMessages
             {
                 Success = true,
                 Message = "Successfully!",
+                ResponseType = ResponseType.Success,
                 Messages = messages
             };
         }

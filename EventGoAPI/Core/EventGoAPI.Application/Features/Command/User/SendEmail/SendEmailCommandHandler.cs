@@ -1,5 +1,6 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
+using EventGoAPI.Application.Enums;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,12 @@ namespace EventGoAPI.Application.Features.Command.User.SendEmail
             var user = await _userReadRepository.CheckUserByUsernameEmailPhoneNumberAsync("", request.Email, "");
             if (user == null)
             {
-                return new SendEmailCommandResponse { Success = false, Message = "Email Not Found" };
+                return new SendEmailCommandResponse
+                {
+                    Success = false,
+                    Message = "Email Not Found",
+                    ResponseType = ResponseType.NotFound
+                };
             }
 
             var random = new Random();
@@ -38,7 +44,12 @@ namespace EventGoAPI.Application.Features.Command.User.SendEmail
             await _userWriteRepository.UpdateAsync(user);
             await _userWriteRepository.SaveChangesAsync();
 
-            return new SendEmailCommandResponse { Success = true, Message = "Verification Code Sent!" };
+            return new SendEmailCommandResponse
+            {
+                Success = true,
+                Message = "Verification Code Sent!",
+                ResponseType = ResponseType.Success
+            };
         }
     }
 }

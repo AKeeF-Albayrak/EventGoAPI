@@ -1,4 +1,5 @@
-﻿using EventGoAPI.Domain.Entities;
+﻿using EventGoAPI.Application.Enums;
+using EventGoAPI.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace EventGoAPI.Application.Features.Command.Event.UpdateEvent
     {
         public bool Success { get; set; }
         public string Message { get; set; }
+        public ResponseType ResponseType { get; set; }
     }
 }

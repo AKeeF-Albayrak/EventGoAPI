@@ -1,4 +1,5 @@
-﻿using EventGoAPI.Domain.Entities;
+﻿using EventGoAPI.Application.Enums;
+using EventGoAPI.Domain.Entities;
 using EventGoAPI.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,8 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
     public class CreateEventCommandResponse
     {
         public bool Success { get; set; }
-        public string Message { get; set; } 
+        public string Message { get; set; }
+        public ResponseType ResponseType { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
         public DateTime? Date { get; set; }

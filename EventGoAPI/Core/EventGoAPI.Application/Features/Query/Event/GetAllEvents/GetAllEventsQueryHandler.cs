@@ -1,5 +1,7 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Enums;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +20,42 @@ namespace EventGoAPI.Application.Features.Query.Event.GetAllEvents
         }
         public async Task<GetAllEventsQueryResponse> Handle(GetAllEventsQueryRequest request, CancellationToken cancellationToken)
         {
-            var events = await _eventReadRepository.GetAllEventsAsync();
-
-            return new()
+            try
             {
-                Events = events,
-                TotalEventCount = events.Count()
-            };
+                var events = await _eventReadRepository.GetAllEventsAsync();
+
+                if (events == null || !events.Any())
+                {
+                    return new GetAllEventsQueryResponse
+                    {
+                        Success = false,
+                        Message = "No events found.",
+                        ResponseType = ResponseType.NotFound,
+                        Events = Enumerable.Empty<Domain.Entities.Event>(),
+                        TotalEventCount = 0
+                    };
+                }
+
+                return new GetAllEventsQueryResponse
+                {
+                    Success = true,
+                    Message = "Events retrieved successfully.",
+                    ResponseType = ResponseType.Success,
+                    Events = events,
+                    TotalEventCount = events.Count()
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GetAllEventsQueryResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while retrieving events.",
+                    ResponseType = ResponseType.ServerError,
+                    Events = Enumerable.Empty<Domain.Entities.Event>(),
+                    TotalEventCount = 0
+                };
+            }
         }
     }
 }

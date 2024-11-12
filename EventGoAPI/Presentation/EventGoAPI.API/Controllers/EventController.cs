@@ -1,6 +1,6 @@
-﻿using EventGoAPI.Application.Abstractions.Repositories;
+﻿using EventGoAPI.API.Utilities;
+using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
-using EventGoAPI.Application.Dtos.EventDtos;
 using EventGoAPI.Application.Features.Command.Event.ApproveEvent;
 using EventGoAPI.Application.Features.Command.Event.CreateEvent;
 using EventGoAPI.Application.Features.Command.Event.DeleteEvent;
@@ -30,10 +30,10 @@ namespace EventGoAPI.API.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult> GetEvents([FromQuery] GetAllEventsQueryRequest getAllEventsQueryRequest)
+        public async Task<IActionResult> GetEvents([FromQuery] GetAllEventsQueryRequest getAllEventsQueryRequest)
         {
             GetAllEventsQueryResponse response = await _mediator.Send(getAllEventsQueryRequest);
-            return Ok(response);
+            return ResponseHandler.CreateResponse(response);
         }
 
         [HttpPost]
@@ -41,22 +41,22 @@ namespace EventGoAPI.API.Controllers
         public async Task<IActionResult> AddEvent([FromBody] CreateEventCommandRequest createEventCommandRequest)
         {
             CreateEventCommandResponse response = await _mediator.Send(createEventCommandRequest);
-            return Ok(response);
+            return ResponseHandler.CreateResponse(response);
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteEvent([FromBody] DeleteEventCommandRequest deleteEventCommandRequest)
         {
             DeleteEventCommandResponse response = await _mediator.Send(deleteEventCommandRequest);
-            return Ok(response);
+            return ResponseHandler.CreateResponse(response);
         }
-
+        
         [HttpPost]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> ApproveEvent([FromBody] ApproveEventCommandRequest approveEventCommandRequest)
         {
             ApproveEventCommandResponse response = await _mediator.Send(approveEventCommandRequest);
-            return Ok(response);
+            return ResponseHandler.CreateResponse(response);
         }
 
         [HttpPost]
@@ -64,7 +64,7 @@ namespace EventGoAPI.API.Controllers
         public async Task<IActionResult> JoinEvent([FromBody] CreateParticipantCommandRequest createParticipantCommandRequest)
         {
             CreateParticipantCommandResponse response = await _mediator.Send(createParticipantCommandRequest);
-            return Ok(response);
+            return ResponseHandler.CreateResponse(response);
         }
 
         [HttpPost]
@@ -72,7 +72,7 @@ namespace EventGoAPI.API.Controllers
         public async Task<IActionResult> LeaveEvent([FromBody] DeleteParticipantCommandRequest deleteParticipantCommandRequest)
         {
             DeleteParticipantCommandResponse response = await _mediator.Send(deleteParticipantCommandRequest);
-            return Ok(response);
+            return ResponseHandler.CreateResponse(response);
         }
 
         [HttpPut]
@@ -80,7 +80,7 @@ namespace EventGoAPI.API.Controllers
         public async Task<IActionResult> UpdateEvent([FromBody] UpdateEventCommandRequest updateEventCommandRequest)
         {
             UpdateEventCommandResponse response = await _mediator.Send(updateEventCommandRequest);
-            return Ok(response);
+            return ResponseHandler.CreateResponse(response);
         }
     }
 }

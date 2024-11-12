@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Enums;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -26,15 +27,18 @@ namespace EventGoAPI.Application.Features.Command.Event.UpdateEvent
                 return new UpdateEventCommandResponse
                 {
                     Success = false,
-                    Message = "Event not found."
+                    Message = "Event not found.",
+                    ResponseType = ResponseType.NotFound
                 };
             }
-            if(request.Date < DateTime.Now)
+
+            if (request.Date < DateTime.Now)
             {
                 return new UpdateEventCommandResponse
                 {
                     Success = false,
-                    Message = "Invalid Date"
+                    Message = "Invalid Date",
+                    ResponseType = ResponseType.ValidationError
                 };
             }
 
@@ -55,8 +59,10 @@ namespace EventGoAPI.Application.Features.Command.Event.UpdateEvent
             return new UpdateEventCommandResponse
             {
                 Success = true,
-                Message = "Event updated successfully."
+                Message = "Event updated successfully.",
+                ResponseType = ResponseType.Success
             };
         }
+
     }
 }

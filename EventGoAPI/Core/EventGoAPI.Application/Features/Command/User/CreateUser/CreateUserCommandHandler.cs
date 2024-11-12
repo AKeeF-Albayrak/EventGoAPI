@@ -1,5 +1,6 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
+using EventGoAPI.Application.Enums;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -24,16 +25,17 @@ namespace EventGoAPI.Application.Features.Command.User.CreateUser
         {
             var case1 = await _userReadRepository.CheckUserByUsernameEmailPhoneNumberAsync(request.Username, request.Email, request.PhoneNumber);
 
-            if(case1 != null)
+            if (case1 != null)
             {
-                return new CreateUserCommandResponse()
+                return new CreateUserCommandResponse
                 {
                     Success = false,
-                    Message = "A user with the same username, email, or phone number already exists."
+                    Message = "A user with the same username, email, or phone number already exists.",
+                    ResponseType = ResponseType.Conflict
                 };
             }
-            
-            var user = new Domain.Entities.User()
+
+            var user = new Domain.Entities.User
             {
                 Id = Guid.NewGuid(),
                 Role = Domain.Enums.UserRole.Normal,
@@ -51,7 +53,6 @@ namespace EventGoAPI.Application.Features.Command.User.CreateUser
                 BirthDate = request.BirthDate,
                 Gender = request.Gender,
                 PhoneNumber = request.PhoneNumber,
-                //Image = request.Image,
                 CreatedTime = DateTime.Now,
                 PasswordResetAuthorized = false,
             };
@@ -59,10 +60,12 @@ namespace EventGoAPI.Application.Features.Command.User.CreateUser
             await _userWriteRepository.AddAsync(user);
             await _userWriteRepository.SaveChangesAsync();
 
-            return new CreateUserCommandResponse()
+            return new CreateUserCommandResponse
             {
                 Success = true,
-                User = user,
+                Message = "User Successfully Added",
+                ResponseType = ResponseType.Success,
+                User = user
             };
         }
     }

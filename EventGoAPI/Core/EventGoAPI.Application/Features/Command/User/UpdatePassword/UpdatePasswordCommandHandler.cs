@@ -1,5 +1,6 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
+using EventGoAPI.Application.Enums;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,12 @@ namespace EventGoAPI.Application.Features.Command.User.UpdatePassword
 
             if (user == null)
             {
-                return new UpdatePasswordCommandResponse { Success = false, Message = "User not found." };
+                return new UpdatePasswordCommandResponse
+                {
+                    Success = false,
+                    Message = "User not found.",
+                    ResponseType = ResponseType.NotFound
+                };
             }
 
             if (!user.PasswordResetAuthorized || user.PasswordResetAuthorizedExpiration < DateTime.Now)
@@ -36,7 +42,8 @@ namespace EventGoAPI.Application.Features.Command.User.UpdatePassword
                 return new UpdatePasswordCommandResponse
                 {
                     Success = false,
-                    Message = "You are not authorized to update the password. Please verify the code again."
+                    Message = "You are not authorized to update the password. Please verify the code again.",
+                    ResponseType = ResponseType.Unauthorized
                 };
             }
 
@@ -47,7 +54,12 @@ namespace EventGoAPI.Application.Features.Command.User.UpdatePassword
             await _userWriteRepository.UpdateAsync(user);
             await _userWriteRepository.SaveChangesAsync();
 
-            return new UpdatePasswordCommandResponse { Success = true, Message = "Password updated successfully." };
+            return new UpdatePasswordCommandResponse
+            {
+                Success = true,
+                Message = "Password updated successfully.",
+                ResponseType = ResponseType.Success
+            };
         }
     }
 }

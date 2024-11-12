@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Enums;
 using EventGoAPI.Application.Features.Command.Participant.DeleteParticipant;
 using EventGoAPI.Domain.Entities;
 using MediatR;
@@ -31,38 +32,42 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
         {
             if (_httpContextAccessor.HttpContext?.Items["UserId"] is not Guid userId)
             {
-                throw new UnauthorizedAccessException("User ID could not be found or is not a valid GUID.");
+                return new CreateParticipantCommandResponse
+                {
+                    Success = false,
+                    Message = "User ID could not be found or is not a valid GUID.",
+                    ResponseType = ResponseType.Unauthorized
+                };
             }
 
-            var participant = new Domain.Entities.Participant
-            {
-                Id = userId,
-                EventId = request.EventId,
-            };
-
             var test1 = await _eventReadRepository.GetEntityByIdAsync(request.EventId);
-            if(test1 == null)
+            if (test1 == null)
             {
                 return new CreateParticipantCommandResponse
                 {
-                   Success = false,
-                   Message = "Wrong Event Id!"
+                    Success = false,
+                    Message = "Wrong Event Id!",
+                    ResponseType = ResponseType.NotFound
                 };
             }
+
             if (!test1.isApproved)
             {
                 return new CreateParticipantCommandResponse
                 {
                     Success = false,
-                    Message = "This Event Not Approved"
+                    Message = "This Event Not Approved",
+                    ResponseType = ResponseType.ValidationError
                 };
             }
-            if(test1.Date < DateTime.Now)
+
+            if (test1.Date < DateTime.Now)
             {
                 return new CreateParticipantCommandResponse
                 {
                     Success = false,
-                    Message = "This Event Ended!"
+                    Message = "This Event Ended!",
+                    ResponseType = ResponseType.ValidationError
                 };
             }
 
@@ -71,19 +76,27 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
                 return new CreateParticipantCommandResponse
                 {
                     Success = false,
-                    Message = "You Are The Creator This Event!"
+                    Message = "You Are The Creator This Event!",
+                    ResponseType = ResponseType.ValidationError
                 };
             }
 
             var test2 = await _participantReadRepository.GetEntityByIdAsync(userId, request.EventId);
-            if(test2 != null)
+            if (test2 != null)
             {
                 return new CreateParticipantCommandResponse
                 {
                     Success = false,
-                    Message = "Participant Already Exists"
+                    Message = "Participant Already Exists",
+                    ResponseType = ResponseType.Conflict
                 };
             }
+
+            var participant = new Domain.Entities.Participant
+            {
+                Id = userId,
+                EventId = request.EventId,
+            };
 
             var point = new Point
             {
@@ -94,7 +107,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
                 Date = DateTime.UtcNow,
             };
 
-            if(await _participantReadRepository.HasNoParticipationAsync(userId))
+            if (await _participantReadRepository.HasNoParticipationAsync(userId))
             {
                 var point2 = new Point
                 {
@@ -113,10 +126,11 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
             await _pointWriteRepository.AddAsync(point);
             await _pointWriteRepository.SaveChangesAsync();
 
-            return new CreateParticipantCommandResponse()
+            return new CreateParticipantCommandResponse
             {
                 Success = true,
-                Message = "Participant Added Successfully"
+                Message = "Participant Added Successfully",
+                ResponseType = ResponseType.Success
             };
         }
     }

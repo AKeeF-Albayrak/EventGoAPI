@@ -1,5 +1,6 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
+using EventGoAPI.Application.Enums;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -23,26 +24,26 @@ namespace EventGoAPI.Application.Features.Query.User.LoginUser
         public async Task<LoginUserQueryResponse> Handle(LoginUserQueryRequest request, CancellationToken cancellationToken)
         {
             var user = await _userReadRepository.GetUserByUsernameAsync(request.Username);
-            
+
             if (user == null || !_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
             {
-                return new LoginUserQueryResponse()
+                return new LoginUserQueryResponse
                 {
                     Success = false,
-                    Message = "Invalid username or password."
+                    Message = "Invalid username or password.",
+                    ResponseType = ResponseType.Unauthorized
                 };
             }
-            
 
             var token = _tokenService.GenerateToken(user);
 
-            return new LoginUserQueryResponse()
+            return new LoginUserQueryResponse
             {
                 Success = true,
                 User = user,
-                Token = token
+                Token = token,
+                ResponseType = ResponseType.Success
             };
-
         }
     }
 }

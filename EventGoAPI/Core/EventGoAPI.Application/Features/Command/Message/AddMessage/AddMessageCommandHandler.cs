@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Enums;
 using EventGoAPI.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +30,8 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
                 return new AddMessageCommandResponse
                 {
                     Success = false,
-                    Message = "Unvalid Id"
+                    Message = "Invalid Id",
+                    ResponseType = ResponseType.ValidationError
                 };
             }
 
@@ -40,7 +42,8 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
                 return new AddMessageCommandResponse
                 {
                     Success = false,
-                    Message = "Unauthorized"
+                    Message = "Unauthorized",
+                    ResponseType = ResponseType.Unauthorized
                 };
             }
 
@@ -59,7 +62,8 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
             return new AddMessageCommandResponse
             {
                 Success = true,
-                Message = "Message Added"
+                Message = "Message Added",
+                ResponseType = ResponseType.Success
             };
         }
     }

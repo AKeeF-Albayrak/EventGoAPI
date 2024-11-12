@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Abstractions.Services;
+using EventGoAPI.Application.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -29,7 +30,8 @@ namespace EventGoAPI.Application.Features.Command.User.Logout
                 return new LogoutCommandResponse
                 {
                     Success = false,
-                    Message = "Token is missing."
+                    Message = "Token is missing.",
+                    ResponseType = ResponseType.ValidationError
                 };
             }
 
@@ -38,7 +40,8 @@ namespace EventGoAPI.Application.Features.Command.User.Logout
             return new LogoutCommandResponse
             {
                 Success = true,
-                Message = "Successfully logged out."
+                Message = "Successfully logged out.",
+                ResponseType = ResponseType.Success
             };
         }
     }

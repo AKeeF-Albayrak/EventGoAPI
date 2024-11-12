@@ -1,5 +1,6 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
+using EventGoAPI.Application.Enums;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -29,16 +30,18 @@ namespace EventGoAPI.Application.Features.Command.Event.ApproveEvent
                 return new ApproveEventCommandResponse
                 {
                     Success = false,
-                    Message = "Event not found."
+                    Message = "Event not found.",
+                    ResponseType = ResponseType.NotFound
                 };
             }
 
-            if (_event.isApproved == true)
+            if (_event.isApproved)
             {
                 return new ApproveEventCommandResponse
                 {
                     Success = true,
-                    Message = "Event approval status is already set to the requested value."
+                    Message = "Event approval status is already set to the requested value.",
+                    ResponseType = ResponseType.Success
                 };
             }
 
@@ -55,7 +58,8 @@ namespace EventGoAPI.Application.Features.Command.Event.ApproveEvent
             return new ApproveEventCommandResponse
             {
                 Success = true,
-                Message = "Event approval status updated successfully."
+                Message = "Event approval status updated successfully.",
+                ResponseType = ResponseType.Success
             };
         }
     }

@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Enums;
 using EventGoAPI.Application.Features.Command.Participant.CreateParticipant;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -27,30 +28,33 @@ namespace EventGoAPI.Application.Features.Command.Participant.DeleteParticipant
         {
             if (_httpContextAccessor.HttpContext?.Items["UserId"] is not Guid userId)
             {
-                throw new UnauthorizedAccessException("User ID could not be found or is not a valid GUID.");
-            }
-
-            var participant = new Domain.Entities.Participant
-            {
-                Id = userId,
-                EventId = request.EventId,
-            };
-            var test1 = await _eventReadRepository.GetEntityByIdAsync(request.EventId);
-
-            if(test1 == null)
-            {
                 return new DeleteParticipantCommandResponse
                 {
                     Success = false,
-                    Message = "Wrong EventId"
+                    Message = "User ID could not be found or is not a valid GUID.",
+                    ResponseType = ResponseType.Unauthorized
                 };
             }
-            if(test1.Date < DateTime.Now)
+
+            var test1 = await _eventReadRepository.GetEntityByIdAsync(request.EventId);
+
+            if (test1 == null)
             {
                 return new DeleteParticipantCommandResponse
                 {
                     Success = false,
-                    Message = "Event Ended"
+                    Message = "Wrong Event ID",
+                    ResponseType = ResponseType.NotFound
+                };
+            }
+
+            if (test1.Date < DateTime.Now)
+            {
+                return new DeleteParticipantCommandResponse
+                {
+                    Success = false,
+                    Message = "Event has already ended.",
+                    ResponseType = ResponseType.ValidationError
                 };
             }
 
@@ -59,17 +63,19 @@ namespace EventGoAPI.Application.Features.Command.Participant.DeleteParticipant
                 return new DeleteParticipantCommandResponse
                 {
                     Success = false,
-                    Message = "You Are The Creator This Event"
+                    Message = "You are the creator of this event and cannot delete yourself as a participant.",
+                    ResponseType = ResponseType.ValidationError
                 };
             }
 
             var test2 = await _participantReadRepository.GetEntityByIdAsync(userId, request.EventId);
-            if(test2 == null)
+            if (test2 == null)
             {
                 return new DeleteParticipantCommandResponse
                 {
                     Success = false,
-                    Message = "Participant Already Not Exists!"
+                    Message = "Participant does not exist in this event.",
+                    ResponseType = ResponseType.Conflict
                 };
             }
 
@@ -79,7 +85,8 @@ namespace EventGoAPI.Application.Features.Command.Participant.DeleteParticipant
             return new DeleteParticipantCommandResponse
             {
                 Success = true,
-                Message = "Joined Event"
+                Message = "Successfully removed from event.",
+                ResponseType = ResponseType.Success
             };
         }
     }

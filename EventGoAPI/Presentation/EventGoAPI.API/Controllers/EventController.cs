@@ -8,6 +8,7 @@ using EventGoAPI.Application.Features.Command.Event.UpdateEvent;
 using EventGoAPI.Application.Features.Command.Participant.CreateParticipant;
 using EventGoAPI.Application.Features.Command.Participant.DeleteParticipant;
 using EventGoAPI.Application.Features.Query.Event.GetAllEvents;
+using EventGoAPI.Application.Features.Query.Event.GetApprovedEvents;
 using EventGoAPI.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -29,10 +30,18 @@ namespace EventGoAPI.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> GetEvents([FromQuery] GetAllEventsQueryRequest getAllEventsQueryRequest)
+        [Authorize(Roles ="admin")]
+        public async Task<IActionResult> GetAllEventsForAdmin([FromQuery] GetAllEventsQueryRequest getAllEventsQueryRequest)
         {
             GetAllEventsQueryResponse response = await _mediator.Send(getAllEventsQueryRequest);
+            return ResponseHandler.CreateResponse(response);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetEventsForUser([FromQuery] GetApprovedEventQueryRequest getApprovedEventQueryRequest)
+        {
+            GetApprovedEventQueryResponse response = await _mediator.Send(getApprovedEventQueryRequest);
             return ResponseHandler.CreateResponse(response);
         }
 

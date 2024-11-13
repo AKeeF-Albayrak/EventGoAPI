@@ -40,8 +40,8 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
                 };
             }
 
-            var test1 = await _eventReadRepository.GetEntityByIdAsync(request.EventId);
-            if (test1 == null)
+            var eventToJoin = await _eventReadRepository.GetEntityByIdAsync(request.EventId);
+            if (eventToJoin == null)
             {
                 return new CreateParticipantCommandResponse
                 {
@@ -51,7 +51,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
                 };
             }
 
-            if (!test1.isApproved)
+            if (!eventToJoin.isApproved)
             {
                 return new CreateParticipantCommandResponse
                 {
@@ -61,7 +61,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
                 };
             }
 
-            if (test1.Date < DateTime.Now)
+            if (eventToJoin.Date < DateTime.Now)
             {
                 return new CreateParticipantCommandResponse
                 {
@@ -71,18 +71,37 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
                 };
             }
 
-            if (test1.CreatedById == userId)
+            if (eventToJoin.CreatedById == userId)
             {
                 return new CreateParticipantCommandResponse
                 {
                     Success = false,
-                    Message = "You Are The Creator This Event!",
+                    Message = "You Are The Creator of This Event!",
                     ResponseType = ResponseType.ValidationError
                 };
             }
 
-            var test2 = await _participantReadRepository.GetEntityByIdAsync(userId, request.EventId);
-            if (test2 != null)
+            var eventToJoinEndTime = eventToJoin.Date.AddMinutes(eventToJoin.Duration);
+
+            var userCurrentEvents = await _eventReadRepository.GetUsersCurrentEvents(userId);
+
+            foreach (var currentEvent in userCurrentEvents)
+            {
+                var currentEventEndTime = currentEvent.Date.AddMinutes(currentEvent.Duration);
+
+                if ((eventToJoin.Date < currentEventEndTime) && (eventToJoinEndTime > currentEvent.Date))
+                {
+                    return new CreateParticipantCommandResponse
+                    {
+                        Success = false,
+                        Message = "You are already registered for another event that conflicts with this event's timing.",
+                        ResponseType = ResponseType.Conflict
+                    };
+                }
+            }
+
+            var existingParticipant = await _participantReadRepository.GetEntityByIdAsync(userId, request.EventId);
+            if (existingParticipant != null)
             {
                 return new CreateParticipantCommandResponse
                 {
@@ -109,7 +128,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
 
             if (await _participantReadRepository.HasNoParticipationAsync(userId))
             {
-                var point2 = new Point
+                var firstParticipationPoint = new Point
                 {
                     Id = Guid.NewGuid(),
                     UserId = userId,
@@ -117,7 +136,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
                     Score = 20,
                     Date = DateTime.UtcNow,
                 };
-                await _pointWriteRepository.AddAsync(point2);
+                await _pointWriteRepository.AddAsync(firstParticipationPoint);
             }
 
             await _participantWriteRepository.AddAsync(participant);
@@ -133,5 +152,6 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
                 ResponseType = ResponseType.Success
             };
         }
+
     }
 }

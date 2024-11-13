@@ -29,12 +29,25 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
                 .ToListAsync();
         }
 
-        public async Task<ICollection<Event>> GetAllEventsForUserAsync() => await Table.Where(entity => EF.Property<bool>(entity, "isApproved")).ToListAsync();
-
+        public async Task<ICollection<Event>> GetAllEventsForUserAsync(Guid userId)
+        {
+            return await _context.Events
+                .Where(e => EF.Property<bool>(e, "isApproved")
+                            && !e.Participants.Any(p => p.Id == userId) && e.Date > DateTime.UtcNow)
+                .ToListAsync();
+        }
         public async Task<List<Event>> GetUserPastEvents(Guid userId)
         {
             return await _context.Participants
                 .Where(p => p.Id == userId && p.Event.Date < DateTime.Now)
+                .Select(p => p.Event)
+                .ToListAsync();
+        }
+
+        public async Task<List<Event>> GetUsersCurrentEvents(Guid userId)
+        {
+            return await _context.Participants
+                .Where(p => p.Id == userId && p.Event.Date >= DateTime.Now)
                 .Select(p => p.Event)
                 .ToListAsync();
         }

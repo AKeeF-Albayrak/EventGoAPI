@@ -25,10 +25,14 @@ namespace EventGoAPI.Application.Features.Query.Event.GetApprovedEvents
         {
             if (_httpContextAccessor.HttpContext?.Items["UserId"] is not Guid userId)
             {
-                throw new UnauthorizedAccessException("User ID could not be found or is not a valid GUID.");
+                return new GetApprovedEventQueryResponse
+                {
+                    Message = "Invalid ID",
+                    ResponseType = Enums.ResponseType.NotFound,
+                };
             }
             var user = await _userReadRepository.GetEntityByIdAsync(userId);
-            var events = await _eventReadRepository.GetAllEventsForUserAsync();
+            var events = await _eventReadRepository.GetAllEventsForUserAsync(userId);
 
             var recommendedEvents = events
                 .Select(e => new
@@ -42,7 +46,9 @@ namespace EventGoAPI.Application.Features.Query.Event.GetApprovedEvents
 
             return new GetApprovedEventQueryResponse
             {
-                Events = recommendedEvents
+                Events = recommendedEvents,
+                Message = "Successfully!",
+                ResponseType = Enums.ResponseType.Success,
             };
         }
         private async Task<int> CalculateEventScore(Domain.Entities.Event e, Domain.Entities.User user)

@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Abstractions.Services;
 using EventGoAPI.Application.Enums;
 using EventGoAPI.Domain.Entities;
 using MediatR;
@@ -17,11 +18,15 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
         private IMessageWriteRepository _messageWriteRepository;
         private IParticipantReadRepository _participantReadRepository;
         private IHttpContextAccessor _httpContextAccessor;
-        public AddMessageCommandHandler(IMessageWriteRepository messageWriteRepository, IHttpContextAccessor httpContextAccessor, IParticipantReadRepository participantReadRepository)
+        private readonly INotificationService _notificationService;
+        private IEventReadRepository _eventReadRepository;
+        public AddMessageCommandHandler(IMessageWriteRepository messageWriteRepository, IHttpContextAccessor httpContextAccessor, IParticipantReadRepository participantReadRepository, INotificationService notificationService, IEventReadRepository eventReadRepository)
         {
             _messageWriteRepository = messageWriteRepository;
             _httpContextAccessor = httpContextAccessor;
             _participantReadRepository = participantReadRepository;
+            _notificationService = notificationService;
+            _eventReadRepository = eventReadRepository;
         }
         public async Task<AddMessageCommandResponse> Handle(AddMessageCommandRequest request, CancellationToken cancellationToken)
         {
@@ -36,7 +41,6 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
             }
 
             var participant = await _participantReadRepository.GetEntityByIdAsync(userId, request.EventId);
-
             if (participant == null)
             {
                 return new AddMessageCommandResponse
@@ -46,6 +50,8 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
                     ResponseType = ResponseType.Unauthorized
                 };
             }
+
+            var _event = await _eventReadRepository.GetEntityByIdAsync(request.EventId);
 
             var message = new Domain.Entities.Message
             {
@@ -59,6 +65,17 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
             await _messageWriteRepository.AddAsync(message);
             await _messageWriteRepository.SaveChangesAsync();
 
+            var eventParticipants = await _participantReadRepository.GetParticipantsByEventIdAsync(request.EventId);
+
+            var notificationMessage = $"New message in the event '{_event.Name}': {request.Message}";
+            foreach (var p in eventParticipants)
+            {
+                if (p.Id != userId)
+                {
+                    await _notificationService.SendNotificationAsync(p.Id.ToString(), notificationMessage);
+                }
+            }
+
             return new AddMessageCommandResponse
             {
                 Success = true,
@@ -66,5 +83,6 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
                 ResponseType = ResponseType.Success
             };
         }
+
     }
 }

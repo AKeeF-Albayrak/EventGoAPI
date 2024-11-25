@@ -55,6 +55,7 @@ namespace EventGoAPI.Application.Features.Command.User.CreateUser
                 PhoneNumber = request.PhoneNumber,
                 CreatedTime = DateTime.Now,
                 PasswordResetAuthorized = false,
+                Image = request.Image,
             };
 
             await _userWriteRepository.AddAsync(user);

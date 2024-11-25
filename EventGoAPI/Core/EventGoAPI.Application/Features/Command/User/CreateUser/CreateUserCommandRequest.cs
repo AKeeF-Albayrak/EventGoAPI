@@ -25,6 +25,6 @@ namespace EventGoAPI.Application.Features.Command.User.CreateUser
         public DateTime BirthDate { get; set; }
         public bool Gender { get; set; }
         public string PhoneNumber { get; set; }
-        //public byte[]? Image { get; set; }
+        public byte[]? Image { get; set; }
     }
 }

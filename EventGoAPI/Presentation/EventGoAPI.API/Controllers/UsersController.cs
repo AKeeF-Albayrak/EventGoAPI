@@ -1,5 +1,6 @@
 ﻿using EventGoAPI.API.Utilities;
 using EventGoAPI.Application.Features.Command.User.DeleteUser;
+using EventGoAPI.Application.Features.Command.User.UpdateUser;
 using EventGoAPI.Application.Features.Query.User.GetUsers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -27,11 +28,19 @@ namespace EventGoAPI.API.Controllers
             return ResponseHandler.CreateResponse(response);
         }
 
-        [HttpPost]
+        [HttpDelete]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteUserAsync([FromBody] DeleteUserCommandRequest deleteUserCommandRequest)
         {
             DeleteUserCommandResponse response = await _mediator.Send(deleteUserCommandRequest);
+            return ResponseHandler.CreateResponse(response);
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserAsync([FromBody] UpdateUserCommandRequest updateUserCommandRequest)
+        {
+            UpdateUserCommandResponse response = await _mediator.Send(updateUserCommandRequest);
             return ResponseHandler.CreateResponse(response);
         }
     }

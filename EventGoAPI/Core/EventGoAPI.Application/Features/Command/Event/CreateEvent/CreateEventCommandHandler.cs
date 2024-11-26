@@ -65,7 +65,8 @@ namespace EventGoAPI.Application.Features.Command.Event.CreateEvent
                 Category = request.Category,
                 CreatedTime = DateTime.Now,
                 CreatedById = userId,
-                isApproved = false
+                isApproved = false,
+                Image = request.Image,
             };
 
             var newParticipant = new Domain.Entities.Participant

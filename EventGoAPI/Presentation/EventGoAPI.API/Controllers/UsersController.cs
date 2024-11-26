@@ -43,5 +43,6 @@ namespace EventGoAPI.API.Controllers
             UpdateUserCommandResponse response = await _mediator.Send(updateUserCommandRequest);
             return ResponseHandler.CreateResponse(response);
         }
+
     }
 }

@@ -32,11 +32,14 @@ namespace EventGoAPI.Domain.Entities
         public List<Event>? Events { get; set; }
         public List<Message>? Messages { get; set; }
         public List<Participant>? Participants { get; set; }
+        public List<Notification>? Notifications { get; set; }
+        public List<Feedback>? Feedbacks { get; set; }
 
         public string? VerificationCode { get; set; }
         public DateTime? VerificationCodeExpiration { get; set; }
 
         public bool PasswordResetAuthorized { get; set; }
         public DateTime? PasswordResetAuthorizedExpiration { get; set; }
+        
     }
 }

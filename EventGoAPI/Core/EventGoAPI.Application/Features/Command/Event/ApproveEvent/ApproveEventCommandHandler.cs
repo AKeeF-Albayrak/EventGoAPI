@@ -1,6 +1,7 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
 using EventGoAPI.Application.Abstractions.Services;
 using EventGoAPI.Application.Enums;
+using EventGoAPI.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,13 @@ namespace EventGoAPI.Application.Features.Command.Event.ApproveEvent
         private IEventWriteRepository _eventWriteRepository;
         private IEventReadRepository _eventReadRepository;
         private readonly INotificationService _notificationService;
-        public ApproveEventCommandHandler(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, INotificationService notificationService)
+        private INotificationWriteRepository _notificationWriteRepository;
+        public ApproveEventCommandHandler(IEventWriteRepository eventWriteRepository, IEventReadRepository eventReadRepository, INotificationService notificationService, INotificationWriteRepository notificationWriteRepository)
         {
             _eventWriteRepository = eventWriteRepository;
             _eventReadRepository = eventReadRepository;
             _notificationService = notificationService;
+            _notificationWriteRepository = notificationWriteRepository;
         }
         public async Task<ApproveEventCommandResponse> Handle(ApproveEventCommandRequest request, CancellationToken cancellationToken)
         {
@@ -49,6 +52,16 @@ namespace EventGoAPI.Application.Features.Command.Event.ApproveEvent
             {
                 var notificationMessage = $"Your event '{_event.Name}' has been approved!";
                 await _notificationService.SendNotificationAsync(_event.CreatedById.ToString(), notificationMessage);
+                Notification notification = new Notification()
+                {
+                    Id = Guid.NewGuid(),
+                    Date = DateTime.Now,
+                    IsRead = false,
+                    Message = notificationMessage,
+                    UserId = _event.CreatedById
+                };
+                await _notificationWriteRepository.AddAsync(notification);
+                await _notificationWriteRepository.SaveChangesAsync();
             }
 
             _event.isApproved = true;

@@ -54,7 +54,7 @@ namespace EventGoAPI.Persistence.Concretes.Services
                                 <p>Merhaba,</p>
                                 <p>Hesabınızı doğrulamak için aşağıdaki kodu kullanın:</p>
                                 <div class='code'>{verificationCode}</div>
-                                <p>Bu kod 10 dakika boyunca geçerli olacaktır.</p>
+                                <p>Bu kod 3 dakika boyunca geçerli olacaktır.</p>
                                 <p>Eğer bu işlemi siz başlatmadıysanız, lütfen bu e-postayı dikkate almayın.</p>
                             </div>
                             <div class='footer'>

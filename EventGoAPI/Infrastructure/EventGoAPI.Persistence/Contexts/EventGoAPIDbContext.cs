@@ -18,6 +18,8 @@ namespace EventGoAPI.Persistence.Context
         public DbSet<Message> Messages { get; set; }
         public DbSet<Participant> Participants { get; set; }
         public DbSet<Domain.Entities.Point> Points { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -84,8 +86,5 @@ namespace EventGoAPI.Persistence.Context
                 .HasForeignKey(p => p.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
-
-
-
     }
 }

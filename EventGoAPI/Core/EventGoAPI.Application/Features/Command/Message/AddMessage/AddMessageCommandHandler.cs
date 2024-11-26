@@ -20,13 +20,15 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
         private IHttpContextAccessor _httpContextAccessor;
         private readonly INotificationService _notificationService;
         private IEventReadRepository _eventReadRepository;
-        public AddMessageCommandHandler(IMessageWriteRepository messageWriteRepository, IHttpContextAccessor httpContextAccessor, IParticipantReadRepository participantReadRepository, INotificationService notificationService, IEventReadRepository eventReadRepository)
+        private INotificationWriteRepository _notificationWriteRepository;
+        public AddMessageCommandHandler(IMessageWriteRepository messageWriteRepository, IHttpContextAccessor httpContextAccessor, IParticipantReadRepository participantReadRepository, INotificationService notificationService, IEventReadRepository eventReadRepository, INotificationWriteRepository notificationWriteRepository)
         {
             _messageWriteRepository = messageWriteRepository;
             _httpContextAccessor = httpContextAccessor;
             _participantReadRepository = participantReadRepository;
             _notificationService = notificationService;
             _eventReadRepository = eventReadRepository;
+            _notificationWriteRepository = notificationWriteRepository;
         }
         public async Task<AddMessageCommandResponse> Handle(AddMessageCommandRequest request, CancellationToken cancellationToken)
         {
@@ -68,14 +70,26 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
             var eventParticipants = await _participantReadRepository.GetParticipantsByEventIdAsync(request.EventId);
 
             var notificationMessage = $"New message in the event '{_event.Name}': {request.Message}";
+
+            Notification notification = new Notification()
+            {
+                Id = Guid.NewGuid(),
+                Date = DateTime.UtcNow,
+                IsRead = false,
+                Message = notificationMessage,
+                UserId = userId,
+            };
             foreach (var p in eventParticipants)
             {
                 if (p.Id != userId)
                 {
+                    notification.Id = Guid.NewGuid();
+                    notification.UserId = p.Id;
                     await _notificationService.SendNotificationAsync(p.Id.ToString(), notificationMessage);
+                    await _notificationWriteRepository.AddAsync(notification);
                 }
             }
-
+            await _notificationWriteRepository.SaveChangesAsync();
             return new AddMessageCommandResponse
             {
                 Success = true,

@@ -40,6 +40,12 @@ namespace EventGoAPI.Persistence
             services.AddScoped<IMessageReadRepository, MessageReadRepository>();
             services.AddScoped<IMessageWriteRepository, MessageWriteRepository>();
 
+            services.AddScoped<INotificationWriteRepository, NotificationWriteRepository>();
+            services.AddScoped<INotificationReadRepository, NotificationReadRepository>();
+
+            services.AddScoped<IFeedbackReadRepository, FeedbackReadRepository>();
+            services.AddScoped<IFeedbackWriteRepository, FeedbackWriteRepository>();
+
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddSingleton<ITokenService, TokenService>();
             services.AddScoped<IEmailService, EmailService>();

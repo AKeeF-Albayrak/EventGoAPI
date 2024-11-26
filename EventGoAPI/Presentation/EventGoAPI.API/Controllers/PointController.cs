@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EventGoAPI.API.Utilities;
+using EventGoAPI.Application.Features.Query.Point;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventGoAPI.API.Controllers
@@ -7,5 +11,18 @@ namespace EventGoAPI.API.Controllers
     [ApiController]
     public class PointController : Controller
     {
+        private IMediator _mediator;
+        public PointController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetPoints([FromBody] GetPointsQueryRequest getPointsQueryRequest)
+        {
+            GetPointsQueryResponse response = await _mediator.Send(getPointsQueryRequest);
+            return ResponseHandler.CreateResponse(response);
+        }
     }
 }

@@ -9,5 +9,6 @@ namespace EventGoAPI.Application.Abstractions.Repositories
 {
     public interface IPointReadRepository : IReadRepository<Point>
     {
+        public Task<ICollection<Point>> GetPointsAsync(Guid userID);
     }
 }

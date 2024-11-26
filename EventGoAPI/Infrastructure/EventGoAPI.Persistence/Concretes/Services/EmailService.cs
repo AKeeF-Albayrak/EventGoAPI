@@ -4,20 +4,19 @@ using MimeKit;
 using MailKit.Net.Smtp;
 using System;
 using System.Threading.Tasks;
+using MailKit.Security;
 
 namespace EventGoAPI.Persistence.Concretes.Services
 {
     public class EmailService : IEmailService
     {
         private readonly string _smtpServer;
-        private readonly int _smtpPort;
         private readonly string _smtpUser;
         private readonly string _smtpPass;
 
         public EmailService(IConfiguration configuration)
         {
             _smtpServer = configuration["SmtpSettings:SmtpServer"];
-            _smtpPort = int.Parse(configuration["SmtpSettings:SmtpPort"]);
             _smtpUser = configuration["SmtpSettings:SmtpUser"];
             _smtpPass = configuration["SmtpSettings:SmtpPass"];
         }
@@ -69,16 +68,27 @@ namespace EventGoAPI.Persistence.Concretes.Services
             try
             {
                 using var client = new SmtpClient();
-                await client.ConnectAsync(_smtpServer, _smtpPort, true);
+                await client.ConnectAsync(_smtpServer, 465, SecureSocketOptions.SslOnConnect);
                 await client.AuthenticateAsync(_smtpUser, _smtpPass);
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine($"Email sending error: {ex.Message}");
-                throw;
+                try
+                {
+                    using var client = new SmtpClient();
+                    await client.ConnectAsync(_smtpServer, 587, SecureSocketOptions.StartTls);
+                    await client.AuthenticateAsync(_smtpUser, _smtpPass);
+                    await client.SendAsync(message);
+                    await client.DisconnectAsync(true);
+                }
+                catch
+                {
+                    throw;
+                }
             }
+
         }
     }
 }

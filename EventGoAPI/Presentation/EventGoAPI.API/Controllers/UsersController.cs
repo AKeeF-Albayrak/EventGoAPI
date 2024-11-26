@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventGoAPI.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class UsersController : Controller
     {

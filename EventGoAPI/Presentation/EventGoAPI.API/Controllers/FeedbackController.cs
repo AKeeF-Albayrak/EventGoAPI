@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventGoAPI.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class FeedbackController : ControllerBase
+    public class FeedbackController : Controller
     {
         private IMediator _mediator;
         public FeedbackController(IMediator mediator)

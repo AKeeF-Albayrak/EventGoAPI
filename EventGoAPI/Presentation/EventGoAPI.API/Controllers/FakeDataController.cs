@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventGoAPI.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class FakeDataController : ControllerBase
+    public class FakeDataController : Controller
     {
         private IMediator _mediator;
         public FakeDataController(IMediator mediator)

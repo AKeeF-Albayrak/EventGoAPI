@@ -21,6 +21,6 @@ namespace EventGoAPI.Application.Features.Command.Event.UpdateEvent
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public EventCategory? Category { get; set; }
-        //public byte[]? Image { get; set; }
+        public byte[]? Image { get; set; }
     }
 }

@@ -52,6 +52,7 @@ namespace EventGoAPI.Application.Features.Command.Event.UpdateEvent
             if (request.Latitude != null) existingEvent.Latitude = request.Latitude.Value;
             if (request.Longitude != null) existingEvent.Longitude = request.Longitude.Value;
             if (request.Category != null) existingEvent.Category = request.Category.Value;
+            if (request.Image != null) existingEvent.Image = request.Image;
 
             await _eventWriteRepository.UpdateAsync(existingEvent);
             await _eventWriteRepository.SaveChangesAsync();

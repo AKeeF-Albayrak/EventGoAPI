@@ -22,7 +22,7 @@ namespace EventGoAPI.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetUsersAsync([FromBody] GetUsersQueryRequest getUsersQueryRequest)
+        public async Task<IActionResult> GetUsersAsync([FromQuery] GetUsersQueryRequest getUsersQueryRequest)
         {
             GetUsersQueryResponse response = await _mediator.Send(getUsersQueryRequest);
             return ResponseHandler.CreateResponse(response);

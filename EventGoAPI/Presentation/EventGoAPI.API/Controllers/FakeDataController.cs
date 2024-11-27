@@ -1,5 +1,7 @@
-﻿using EventGoAPI.Application.Features.Command.Event.CreateEvent;
+﻿using Azure.Identity;
+using EventGoAPI.Application.Features.Command.Event.CreateEvent;
 using EventGoAPI.Application.Features.Command.FakeData.CreateFakeEvent;
+using EventGoAPI.Application.Features.Command.FakeData.CreateFakeParticipant;
 using EventGoAPI.Application.Features.Command.User.CreateUser;
 using EventGoAPI.Domain.Entities;
 using EventGoAPI.Domain.Enums;
@@ -7,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 
 namespace EventGoAPI.API.Controllers
 {
@@ -30,6 +33,7 @@ namespace EventGoAPI.API.Controllers
 
             List<User> fakeUsers = new List<User>();
             List<Event> fakeEvents = new List<Event>();
+            List<Participant> fakeParticipanticipants = new List<Participant>();
 
             for (int i = 0; i < 15; i++)
             {
@@ -39,11 +43,12 @@ namespace EventGoAPI.API.Controllers
                 string city = faker.Address.City();
                 string address = faker.Address.StreetAddress();
                 string country = "Türkiye";
+                var username = faker.Internet.UserName();
 
                 var request = new CreateUserCommandRequest
                 {
-                    Username = faker.Internet.UserName(),
-                    PasswordHash = faker.Internet.Password(),
+                    Username = username,
+                    PasswordHash = username,
                     Email = faker.Internet.Email(),
                     Address = $"{address}, {city}, {country}",
                     City = city,
@@ -94,8 +99,28 @@ namespace EventGoAPI.API.Controllers
                 fakeEvents.Add(response.Event);
             }
 
+            for(int i = 0; i< 10; i++)
+            {
+                var randomUser = faker.PickRandom(fakeUsers);
+                var randomEvent = faker.PickRandom(fakeEvents);
 
-            return Ok(new { Users = fakeUsers, Events = fakeEvents });
+                var request = new CreateFakeParticipantCommandRequest
+                {
+                    UserId = randomUser.Id,
+                    EventId = randomEvent.Id,
+                };
+
+                CreateFakeParticipantCommandResponse response = await _mediator.Send(request);
+                if (response.Success)
+                {
+                    fakeParticipanticipants.Add(response.Participant);
+                }else
+                {
+                    i--;
+                }
+            }
+
+            return Ok(new { Users = fakeUsers, Events = fakeEvents , Participants = fakeParticipanticipants});
         }
 
     }

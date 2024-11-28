@@ -9,5 +9,6 @@ namespace EventGoAPI.Application.Abstractions.Repositories
 {
     public interface INotificationReadRepository : IReadRepository<Notification>
     {
+        public Task<List<Notification>> GetNotificationsAsync(Guid userid);
     }
 }

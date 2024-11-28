@@ -21,7 +21,7 @@ namespace EventGoAPI.API.Controllers
 
         [HttpGet]
         [Authorize(Roles ="admin")]
-        public async Task<IActionResult> GetFeedBacks([FromBody] GetFeedbacksQueryRequest getFeedbacksQueryRequest)
+        public async Task<IActionResult> GetFeedBacks([FromQuery] GetFeedbacksQueryRequest getFeedbacksQueryRequest)
         {
             GetFeedbacksQueryResponse response = await _mediator.Send(getFeedbacksQueryRequest);
             return ResponseHandler.CreateResponse(response);

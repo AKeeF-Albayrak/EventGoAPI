@@ -1,6 +1,7 @@
 ﻿using EventGoAPI.API.Utilities;
 using EventGoAPI.Application.Features.Command.User.DeleteUser;
 using EventGoAPI.Application.Features.Command.User.UpdateUser;
+using EventGoAPI.Application.Features.Query.Notification;
 using EventGoAPI.Application.Features.Query.User.GetUsers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +19,13 @@ namespace EventGoAPI.API.Controllers
         public UsersController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetNotifications([FromQuery] GetNotificationsQueryRequest getNotificationsQueryRequest)
+        {
+            GetNotificationsQueryResponse response = await _mediator.Send(getNotificationsQueryRequest);
+            return ResponseHandler.CreateResponse(response);
         }
 
         [HttpGet]

@@ -1,6 +1,7 @@
 ﻿using Azure.Identity;
 using EventGoAPI.Application.Features.Command.Event.CreateEvent;
 using EventGoAPI.Application.Features.Command.FakeData.CreateFakeEvent;
+using EventGoAPI.Application.Features.Command.FakeData.CreateFakeMessage;
 using EventGoAPI.Application.Features.Command.FakeData.CreateFakeParticipant;
 using EventGoAPI.Application.Features.Command.User.CreateUser;
 using EventGoAPI.Domain.Entities;
@@ -33,7 +34,8 @@ namespace EventGoAPI.API.Controllers
 
             List<User> fakeUsers = new List<User>();
             List<Event> fakeEvents = new List<Event>();
-            List<Participant> fakeParticipanticipants = new List<Participant>();
+            List<Participant> fakeParticipants = new List<Participant>();
+            List<Message> fakeMessages = new List<Message>(); // Mesaj listesi
 
             for (int i = 0; i < 15; i++)
             {
@@ -99,7 +101,7 @@ namespace EventGoAPI.API.Controllers
                 fakeEvents.Add(response.Event);
             }
 
-            for(int i = 0; i< 10; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var randomUser = faker.PickRandom(fakeUsers);
                 var randomEvent = faker.PickRandom(fakeEvents);
@@ -113,15 +115,31 @@ namespace EventGoAPI.API.Controllers
                 CreateFakeParticipantCommandResponse response = await _mediator.Send(request);
                 if (response.Success)
                 {
-                    fakeParticipanticipants.Add(response.Participant);
-                }else
+                    var participant = response.Participant;
+                    fakeParticipants.Add(participant);
+
+                    for (int j = 0; j < 10; j++)
+                    {
+                        var messageDate = faker.Date.Between(randomEvent.Date, DateTime.UtcNow);
+                        var request1 = new CreateFakeMessageCommandRequest
+                        {
+                            SenderId = randomUser.Id,
+                            SendingTime = messageDate,
+                            Message = faker.Lorem.Sentence(),
+                            EventId = randomEvent.Id,
+                        };
+
+                        CreateFakeMessageCommandResponse response1 = await _mediator.Send(request1);
+                        fakeMessages.Add(response1.Message);
+                    }
+                }
+                else
                 {
                     i--;
                 }
             }
 
-            return Ok(new { Users = fakeUsers, Events = fakeEvents , Participants = fakeParticipanticipants});
+            return Ok(new { Users = fakeUsers, Events = fakeEvents, Participants = fakeParticipants, Messages = fakeMessages });
         }
-
     }
 }

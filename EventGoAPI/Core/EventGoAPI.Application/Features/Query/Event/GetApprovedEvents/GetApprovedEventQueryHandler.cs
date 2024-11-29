@@ -34,12 +34,11 @@ namespace EventGoAPI.Application.Features.Query.Event.GetApprovedEvents
             var user = await _userReadRepository.GetEntityByIdAsync(userId);
             var events = await _eventReadRepository.GetAllEventsForUserAsync(userId);
 
-            var scoredEvents = new List<(Domain.Entities.Event Event, int Score)>();
-            foreach (var e in events)
+            var scoredEvents = await Task.WhenAll(events.Select(async e => new
             {
-                var score = await CalculateEventScore(e, user);
-                scoredEvents.Add((e, score));
-            }
+                Event = e,
+                Score = await CalculateEventScore(e, user)
+            }));
 
             var recommendedEvents = scoredEvents
                 .OrderByDescending(x => x.Score)
@@ -53,6 +52,7 @@ namespace EventGoAPI.Application.Features.Query.Event.GetApprovedEvents
                 ResponseType = Enums.ResponseType.Success,
             };
         }
+
 
         private async Task<int> CalculateEventScore(Domain.Entities.Event e, Domain.Entities.User user)
         {

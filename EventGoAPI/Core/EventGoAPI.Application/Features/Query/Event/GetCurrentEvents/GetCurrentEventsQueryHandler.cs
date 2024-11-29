@@ -33,7 +33,7 @@ namespace EventGoAPI.Application.Features.Query.Event.GetCurrentEvents
                 };
             }
 
-            var events = await _eventReadRepository.GetUserPastEventsAsync(userId);
+            var events = await _eventReadRepository.GetUsersCurrentEventsAsync(userId);
 
             return new GetCurrentEventsQueryResponse
             {

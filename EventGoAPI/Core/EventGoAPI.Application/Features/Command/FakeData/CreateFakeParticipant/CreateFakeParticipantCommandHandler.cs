@@ -39,7 +39,7 @@ namespace EventGoAPI.Application.Features.Command.FakeData.CreateFakeParticipant
 
             var eventToJoinEndTime = eventToJoin.Date.AddMinutes(eventToJoin.Duration);
 
-            var userCurrentEvents = await _eventReadRepository.GetUsersCurrentEvents(request.UserId);
+            var userCurrentEvents = await _eventReadRepository.GetUsersCurrentEventsAsync(request.UserId);
 
             foreach (var currentEvent in userCurrentEvents)
             {

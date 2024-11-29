@@ -60,6 +60,9 @@ namespace EventGoAPI.Application.Features.Command.User.UpdateUser
             if (request.PhoneNumber != null) user.PhoneNumber = request.PhoneNumber;
             if (request.Image != null) user.Image = request.Image;
 
+            await _userWriteRepository.UpdateAsync(user);
+            await _userWriteRepository.SaveChangesAsync();
+
             return new UpdateUserCommandResponse
             {
                 Success = true,

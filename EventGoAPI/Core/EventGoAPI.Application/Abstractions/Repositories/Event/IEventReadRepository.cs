@@ -11,7 +11,7 @@ namespace EventGoAPI.Application.Abstractions.Repositories
     {
         public Task<ICollection<Event>> GetAllEventsForUserAsync(Guid userId);
         public Task<ICollection<Event>> GetAllEventsAsync();
-        Task<List<Event>> GetUserPastEvents(Guid userId);
-        Task<List<Event>> GetUsersCurrentEvents(Guid userId);
+        Task<List<Event>> GetUserPastEventsAsync(Guid userId);
+        Task<List<Event>> GetUsersCurrentEventsAsync(Guid userId);
     }
 }

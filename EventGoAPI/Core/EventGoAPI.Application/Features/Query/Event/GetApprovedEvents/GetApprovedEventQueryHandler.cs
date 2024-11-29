@@ -60,7 +60,7 @@ namespace EventGoAPI.Application.Features.Query.Event.GetApprovedEvents
                 score += 10;
             }
 
-            var userPastEvents = await _eventReadRepository.GetUserPastEvents(user.Id);
+            var userPastEvents = await _eventReadRepository.GetUserPastEventsAsync(user.Id);
             if (userPastEvents.Any(pastEvent => pastEvent.Category == e.Category))
             {
                 score += 5;

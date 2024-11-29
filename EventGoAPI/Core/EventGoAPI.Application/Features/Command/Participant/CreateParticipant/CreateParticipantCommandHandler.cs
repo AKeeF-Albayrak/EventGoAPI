@@ -83,7 +83,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
 
             var eventToJoinEndTime = eventToJoin.Date.AddMinutes(eventToJoin.Duration);
 
-            var userCurrentEvents = await _eventReadRepository.GetUsersCurrentEvents(userId);
+            var userCurrentEvents = await _eventReadRepository.GetUsersCurrentEventsAsync(userId);
 
             foreach (var currentEvent in userCurrentEvents)
             {

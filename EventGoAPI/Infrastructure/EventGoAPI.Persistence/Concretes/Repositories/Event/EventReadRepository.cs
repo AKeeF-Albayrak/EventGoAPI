@@ -36,7 +36,7 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
                             && !e.Participants.Any(p => p.Id == userId) && e.Date > DateTime.UtcNow)
                 .ToListAsync();
         }
-        public async Task<List<Event>> GetUserPastEvents(Guid userId)
+        public async Task<List<Event>> GetUserPastEventsAsync(Guid userId)
         {
             return await _context.Participants
                 .Where(p => p.Id == userId && p.Event.Date < DateTime.Now)
@@ -44,7 +44,7 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Event>> GetUsersCurrentEvents(Guid userId)
+        public async Task<List<Event>> GetUsersCurrentEventsAsync(Guid userId)
         {
             return await _context.Participants
                 .Where(p => p.Id == userId && p.Event.Date >= DateTime.Now)

@@ -9,12 +9,15 @@ using EventGoAPI.Application.Features.Command.Participant.CreateParticipant;
 using EventGoAPI.Application.Features.Command.Participant.DeleteParticipant;
 using EventGoAPI.Application.Features.Query.Event.GetAllEvents;
 using EventGoAPI.Application.Features.Query.Event.GetApprovedEvents;
+using EventGoAPI.Application.Features.Query.Event.GetCurrentEvents;
+using EventGoAPI.Application.Features.Query.Event.GetPastEvents;
 using EventGoAPI.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Claims;
 
 namespace EventGoAPI.API.Controllers
@@ -42,6 +45,22 @@ namespace EventGoAPI.API.Controllers
         public async Task<IActionResult> GetEventsForUser([FromQuery] GetApprovedEventQueryRequest getApprovedEventQueryRequest)
         {
             GetApprovedEventQueryResponse response = await _mediator.Send(getApprovedEventQueryRequest);
+            return ResponseHandler.CreateResponse(response);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetUsersCurrentEvents([FromQuery] GetCurrentEventsQueryRequest getCurrentEventsQueryRequest)
+        {
+            GetCurrentEventsQueryResponse response = await _mediator.Send(getCurrentEventsQueryRequest);
+            return ResponseHandler.CreateResponse(response);
+        }
+
+        [HttpGet]   
+        [Authorize]
+        public async Task<IActionResult> GetUsersPastEvents([FromQuery] GetPastEventsQueryRequest getPastEventsQueryRequest)
+        {
+            GetPastEventsQueryResponse response = await _mediator.Send(getPastEventsQueryRequest);
             return ResponseHandler.CreateResponse(response);
         }
 

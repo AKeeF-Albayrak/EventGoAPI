@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Dtos.Message;
 using EventGoAPI.Application.Enums;
 using EventGoAPI.Application.Features.Command.Event.CreateEvent;
 using MediatR;
@@ -17,12 +18,14 @@ namespace EventGoAPI.Application.Features.Query.Message.GetEventMessages
         private IEventReadRepository _eventReadRepository;
         private IParticipantReadRepository _participantReadRepository;
         private IHttpContextAccessor _httpContextAccessor;
-        public GetEventMessagesHandler(IMessageReadRepository messageReadRepository, IEventReadRepository eventReadRepository, IParticipantReadRepository participantReadRepository, IHttpContextAccessor httpContextAccessor)
+        private IUserReadRepository _userReadRepository;
+        public GetEventMessagesHandler(IMessageReadRepository messageReadRepository, IEventReadRepository eventReadRepository, IParticipantReadRepository participantReadRepository, IHttpContextAccessor httpContextAccessor ,IUserReadRepository userReadRepository)
         {
             _messageReadRepository = messageReadRepository;
             _eventReadRepository = eventReadRepository;
             _participantReadRepository = participantReadRepository;
             _httpContextAccessor = httpContextAccessor;
+            _userReadRepository = userReadRepository;
         }
         public async Task<GetEventMessagesResponse> Handle(GetEventMessagesRequest request, CancellationToken cancellationToken)
         {
@@ -61,14 +64,31 @@ namespace EventGoAPI.Application.Features.Query.Message.GetEventMessages
                 };
             }
 
-            var messages = await _messageReadRepository.GetAllChatMessagesAsync(request.EventId);
+            var _messages = await _messageReadRepository.GetAllChatMessagesAsync(request.EventId);
+            
+            ICollection<MessageViewDto> messages = new List<MessageViewDto>();
+
+            foreach( var message in _messages )
+            {
+                var user = await _userReadRepository.GetEntityByIdAsync(message.SenderId);
+
+                messages.Add(new MessageViewDto
+                {
+                    Id = message.Id,
+                    SenderId = message.SenderId,
+                    EventId = message.EventId,
+                    SendingTime = DateTime.UtcNow,
+                    Text = message.Text,
+                    Username = user.Username
+                });
+            }
 
             return new GetEventMessagesResponse
             {
                 Success = true,
                 Message = "Successfully!",
                 ResponseType = ResponseType.Success,
-                Messages = messages
+                Messages = messages,
             };
         }
     }

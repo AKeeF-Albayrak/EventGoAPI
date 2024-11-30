@@ -25,7 +25,7 @@ namespace EventGoAPI.API.Controllers
             return ResponseHandler.CreateResponse(response);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
         public async Task<IActionResult> GetMessages([FromBody] GetEventMessagesRequest getEventMessagesRequest)
         {

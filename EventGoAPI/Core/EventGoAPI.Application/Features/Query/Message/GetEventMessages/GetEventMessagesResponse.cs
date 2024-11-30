@@ -1,4 +1,5 @@
-﻿using EventGoAPI.Application.Enums;
+﻿using EventGoAPI.Application.Dtos.Message;
+using EventGoAPI.Application.Enums;
 using EventGoAPI.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace EventGoAPI.Application.Features.Query.Message.GetEventMessages
     {
         public bool Success { get; set; }
         public string Message { get; set; }
-        public ICollection<Domain.Entities.Message> Messages { get; set; }
+        public ICollection<MessageViewDto> Messages { get; set; }
         public ResponseType ResponseType { get; set; }
     }
 }

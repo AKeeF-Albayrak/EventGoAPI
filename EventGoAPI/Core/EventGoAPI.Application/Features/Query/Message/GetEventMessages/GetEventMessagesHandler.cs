@@ -77,7 +77,7 @@ namespace EventGoAPI.Application.Features.Query.Message.GetEventMessages
                     Id = message.Id,
                     SenderId = message.SenderId,
                     EventId = message.EventId,
-                    SendingTime = DateTime.UtcNow,
+                    SendingTime = message.SendingTime,
                     Text = message.Text,
                     Username = user.Username
                 });

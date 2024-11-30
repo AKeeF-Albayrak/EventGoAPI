@@ -302,7 +302,7 @@ namespace EventGoAPI.Persistence.Migrations
             modelBuilder.Entity("EventGoAPI.Domain.Entities.Feedback", b =>
                 {
                     b.HasOne("EventGoAPI.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Feedbacks")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -332,7 +332,7 @@ namespace EventGoAPI.Persistence.Migrations
             modelBuilder.Entity("EventGoAPI.Domain.Entities.Notification", b =>
                 {
                     b.HasOne("EventGoAPI.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -404,7 +404,11 @@ namespace EventGoAPI.Persistence.Migrations
                 {
                     b.Navigation("Events");
 
+                    b.Navigation("Feedbacks");
+
                     b.Navigation("Messages");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("Participants");
 

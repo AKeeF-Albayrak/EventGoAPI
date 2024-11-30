@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventGoAPI.Persistence.Migrations
 {
     [DbContext(typeof(EventGoDbContext))]
-    [Migration("20241126150435_Mig_3")]
-    partial class Mig_3
+    [Migration("20241128091156_mig1")]
+    partial class mig1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -305,7 +305,7 @@ namespace EventGoAPI.Persistence.Migrations
             modelBuilder.Entity("EventGoAPI.Domain.Entities.Feedback", b =>
                 {
                     b.HasOne("EventGoAPI.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Feedbacks")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -335,7 +335,7 @@ namespace EventGoAPI.Persistence.Migrations
             modelBuilder.Entity("EventGoAPI.Domain.Entities.Notification", b =>
                 {
                     b.HasOne("EventGoAPI.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -407,7 +407,11 @@ namespace EventGoAPI.Persistence.Migrations
                 {
                     b.Navigation("Events");
 
+                    b.Navigation("Feedbacks");
+
                     b.Navigation("Messages");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("Participants");
 

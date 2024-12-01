@@ -86,7 +86,7 @@ namespace EventGoAPI.API.Controllers
                     Name = faker.Lorem.Sentence(3),
                     Description = faker.Lorem.Paragraph(),
                     Date = faker.Date.Future(),
-                    Duration = faker.Random.Int(1, 12),
+                    Duration = faker.Random.Int(60, 500),
                     Address = $"{address}, {city}, {country}",
                     City = city,
                     Country = country,

@@ -9,6 +9,7 @@ using EventGoAPI.Application.Features.Command.Participant.CreateParticipant;
 using EventGoAPI.Application.Features.Command.Participant.DeleteParticipant;
 using EventGoAPI.Application.Features.Query.Event.GetAllEvents;
 using EventGoAPI.Application.Features.Query.Event.GetApprovedEvents;
+using EventGoAPI.Application.Features.Query.Event.GetCreatedEvents;
 using EventGoAPI.Application.Features.Query.Event.GetCurrentEvents;
 using EventGoAPI.Application.Features.Query.Event.GetEventById;
 using EventGoAPI.Application.Features.Query.Event.GetPastEvents;
@@ -62,6 +63,14 @@ namespace EventGoAPI.API.Controllers
         public async Task<IActionResult> GetUsersCurrentEvents([FromQuery] GetCurrentEventsQueryRequest getCurrentEventsQueryRequest)
         {
             GetCurrentEventsQueryResponse response = await _mediator.Send(getCurrentEventsQueryRequest);
+            return ResponseHandler.CreateResponse(response);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetUsersCreatedEvents([FromQuery]GetCreatedEventsQueryRequest getCreatedEventsQueryRequest)
+        {
+            GetCreatedEventsQueryResponse response = await _mediator.Send(getCreatedEventsQueryRequest);
             return ResponseHandler.CreateResponse(response);
         }
 

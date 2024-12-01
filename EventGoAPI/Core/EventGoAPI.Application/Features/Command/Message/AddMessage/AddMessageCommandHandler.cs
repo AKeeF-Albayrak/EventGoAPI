@@ -71,7 +71,7 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
 
             var notificationMessage = $"New message in the event '{_event.Name}': {request.Message}";
 
-            Notification notification = new Notification()
+            Domain.Entities.Notification notification = new Domain.Entities.Notification()
             {
                 Id = Guid.NewGuid(),
                 Date = DateTime.Now,

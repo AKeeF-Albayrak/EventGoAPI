@@ -50,9 +50,9 @@ namespace EventGoAPI.Application.Features.Command.Event.ApproveEvent
 
             if (!string.IsNullOrEmpty(_event.CreatedById.ToString()))
             {
-                var notificationMessage = $"Your event '{_event.Name}' has been approved!";
+                var notificationMessage = $"{_event.Name} adli etkinliginiz onaylandi!";
                 await _notificationService.SendNotificationAsync(_event.CreatedById.ToString(), notificationMessage);
-                Notification notification = new Notification()
+                Domain.Entities.Notification notification = new Domain.Entities.Notification()
                 {
                     Id = Guid.NewGuid(),
                     Date = DateTime.Now,

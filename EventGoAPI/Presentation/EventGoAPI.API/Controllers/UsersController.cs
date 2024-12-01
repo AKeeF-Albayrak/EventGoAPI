@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.API.Utilities;
+using EventGoAPI.Application.Features.Command.Notification.DeleteNotification;
 using EventGoAPI.Application.Features.Command.User.DeleteUser;
 using EventGoAPI.Application.Features.Command.User.UpdateUser;
 using EventGoAPI.Application.Features.Query.AdminData.GetAdminData;
@@ -8,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace EventGoAPI.API.Controllers
 {
@@ -26,6 +28,14 @@ namespace EventGoAPI.API.Controllers
         public async Task<IActionResult> GetNotifications([FromQuery] GetNotificationsQueryRequest getNotificationsQueryRequest)
         {
             GetNotificationsQueryResponse response = await _mediator.Send(getNotificationsQueryRequest);
+            return ResponseHandler.CreateResponse(response);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteNotifications([FromBody]DeleteNotificationCommandRequest deleteNotificationCommandRequest)
+        {
+            DeleteNotificationCommandResponse response = await _mediator.Send(deleteNotificationCommandRequest);
             return ResponseHandler.CreateResponse(response);
         }
 

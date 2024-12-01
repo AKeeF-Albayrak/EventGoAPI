@@ -19,7 +19,7 @@ namespace EventGoAPI.API.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetPoints([FromBody] GetPointsQueryRequest getPointsQueryRequest)
+        public async Task<IActionResult> GetPoints([FromQuery] GetPointsQueryRequest getPointsQueryRequest)
         {
             GetPointsQueryResponse response = await _mediator.Send(getPointsQueryRequest);
             return ResponseHandler.CreateResponse(response);

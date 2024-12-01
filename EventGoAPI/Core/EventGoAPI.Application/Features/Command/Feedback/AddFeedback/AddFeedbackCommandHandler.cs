@@ -38,7 +38,7 @@ namespace EventGoAPI.Application.Features.Command.Feedback.AddFeedback
                 Id = Guid.NewGuid(),
                 UserID = userId,
                 Message = request.Message,
-                SendingDate = DateTime.UtcNow,
+                SendingDate = DateTime.Now,
                 IsRead = false,
             };
 

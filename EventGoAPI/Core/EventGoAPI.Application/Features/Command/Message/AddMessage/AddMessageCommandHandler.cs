@@ -74,7 +74,7 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
             Notification notification = new Notification()
             {
                 Id = Guid.NewGuid(),
-                Date = DateTime.UtcNow,
+                Date = DateTime.Now,
                 IsRead = false,
                 Message = notificationMessage,
                 UserId = userId,

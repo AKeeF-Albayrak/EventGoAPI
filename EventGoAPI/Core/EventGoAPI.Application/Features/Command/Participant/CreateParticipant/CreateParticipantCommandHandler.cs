@@ -123,7 +123,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
                 UserId = userId,
                 EventId = request.EventId,
                 Score = 10,
-                Date = DateTime.UtcNow,
+                Date = DateTime.Now,
             };
 
             if (await _participantReadRepository.HasNoParticipationAsync(userId))
@@ -134,7 +134,7 @@ namespace EventGoAPI.Application.Features.Command.Participant.CreateParticipant
                     UserId = userId,
                     EventId = request.EventId,
                     Score = 20,
-                    Date = DateTime.UtcNow,
+                    Date = DateTime.Now,
                 };
                 await _pointWriteRepository.AddAsync(firstParticipationPoint);
             }

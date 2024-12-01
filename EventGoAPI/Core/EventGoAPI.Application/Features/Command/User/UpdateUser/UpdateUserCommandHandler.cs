@@ -1,4 +1,5 @@
 ﻿using EventGoAPI.Application.Abstractions.Repositories;
+using EventGoAPI.Application.Abstractions.Services;
 using EventGoAPI.Application.Enums;
 using EventGoAPI.Application.Features.Command.Participant.CreateParticipant;
 using MediatR;
@@ -16,11 +17,13 @@ namespace EventGoAPI.Application.Features.Command.User.UpdateUser
         private IUserWriteRepository _userWriteRepository;
         private IUserReadRepository _userReadRepository;
         private IHttpContextAccessor _httpContextAccessor;
-        public UpdateUserCommandHandler(IUserWriteRepository userWriteRepository, IUserReadRepository userReadRepository, IHttpContextAccessor httpContextAccessor)
+        private IPasswordHasher _passwordHasher;
+        public UpdateUserCommandHandler(IUserWriteRepository userWriteRepository, IUserReadRepository userReadRepository, IHttpContextAccessor httpContextAccessor, IPasswordHasher passwordHasher)
         {
             _userWriteRepository = userWriteRepository;
             _userReadRepository = userReadRepository;
             _httpContextAccessor = httpContextAccessor;
+            _passwordHasher = passwordHasher;
         }
         public async Task<UpdateUserCommandResponse> Handle(UpdateUserCommandRequest request, CancellationToken cancellationToken)
         {
@@ -45,6 +48,7 @@ namespace EventGoAPI.Application.Features.Command.User.UpdateUser
                     ResponseType = ResponseType.Unauthorized
                 };
             }
+            user.PasswordHash = _passwordHasher.HashPassword(user.PasswordHash);
 
             if (request.Username != null) user.Username = request.Username;
             if (request.PasswordHash != null) user.PasswordHash = request.PasswordHash;

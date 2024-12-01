@@ -68,7 +68,8 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
         public async Task<List<Event>> GetUsersCreatedEventsAsync(Guid userId)
         {
             return await Table
-                .Where(e => e.CreatedById == userId)
+                .Where(e => e.CreatedById == userId &&
+                            e.Date >= DateTime.Now)
                 .ToListAsync();
         }
     }

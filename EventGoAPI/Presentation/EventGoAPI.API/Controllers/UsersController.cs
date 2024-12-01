@@ -31,7 +31,7 @@ namespace EventGoAPI.API.Controllers
             return ResponseHandler.CreateResponse(response);
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Authorize]
         public async Task<IActionResult> DeleteNotifications([FromBody]DeleteNotificationCommandRequest deleteNotificationCommandRequest)
         {

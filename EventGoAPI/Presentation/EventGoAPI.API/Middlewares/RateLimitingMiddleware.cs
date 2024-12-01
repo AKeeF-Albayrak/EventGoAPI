@@ -58,10 +58,10 @@ public class RateLimitInfo
 
     public bool AllowRequest()
     {
-        if (DateTime.UtcNow > _resetTime)
+        if (DateTime.Now > _resetTime)
         {
             _requestCount = 0;
-            _resetTime = DateTime.UtcNow.Add(ResetTimeSpan);
+            _resetTime = DateTime.Now.Add(ResetTimeSpan);
         }
 
         if (_requestCount < MaxRequests)

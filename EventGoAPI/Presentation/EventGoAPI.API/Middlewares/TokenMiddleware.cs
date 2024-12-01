@@ -17,8 +17,6 @@ namespace EventGoAPI.API.Middlewares
 
             if (!string.IsNullOrEmpty(token))
             {
-                // Token'i kullanarak herhangi bir işlem yapabilirsiniz
-                // Örneğin, kara liste kontrolü burada yapılabilir veya belirli bir veri konteynerine eklenebilir
                 context.Items["Token"] = token;
             }
 

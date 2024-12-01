@@ -19,6 +19,7 @@ namespace EventGoAPI.Application.Features.Command.Notification.DeleteNotificatio
         public async Task<DeleteNotificationCommandResponse> Handle(DeleteNotificationCommandRequest request, CancellationToken cancellationToken)
         {
             await _notificationWriteRepository.DeleteAsync(request.Id);
+            await _notificationWriteRepository.SaveChangesAsync();
             return new DeleteNotificationCommandResponse()
             {
                 Success = true,

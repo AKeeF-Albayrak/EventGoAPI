@@ -69,7 +69,7 @@ namespace EventGoAPI.Application.Features.Command.Message.AddMessage
 
             var eventParticipants = await _participantReadRepository.GetParticipantsByEventIdAsync(request.EventId);
 
-            var notificationMessage = $"New message in the event '{_event.Name}': {request.Message}";
+            var notificationMessage = $"Yeni mesaj var! '{_event.Name}': {request.Message}";
 
             Domain.Entities.Notification notification = new Domain.Entities.Notification()
             {

@@ -36,6 +36,12 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
                             && !e.Participants.Any(p => p.Id == userId) && e.Date > DateTime.UtcNow)
                 .ToListAsync();
         }
+
+        public async Task<int> GetAllEventCountAsync()
+        {
+            return await Table.CountAsync();
+        }
+
         public async Task<List<Event>> GetUserPastEventsAsync(Guid userId)
         {
             return await _context.Participants
@@ -50,6 +56,11 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
                 .Where(p => p.Id == userId && p.Event.Date >= DateTime.Now)
                 .Select(p => p.Event)
                 .ToListAsync();
+        }
+
+        public async Task<int> GetUnapprovedEventCountAsync()
+        {
+            return await Table.CountAsync(e => !e.isApproved);
         }
     }
 }

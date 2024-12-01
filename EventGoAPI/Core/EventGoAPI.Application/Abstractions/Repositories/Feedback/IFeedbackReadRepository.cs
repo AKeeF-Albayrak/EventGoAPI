@@ -9,5 +9,6 @@ namespace EventGoAPI.Application.Abstractions.Repositories
 {
     public interface IFeedbackReadRepository : IReadRepository<Feedback>
     {
+        Task<int> GetFeedbackCountAsync();
     }
 }

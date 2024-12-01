@@ -1,6 +1,7 @@
 ﻿using EventGoAPI.API.Utilities;
 using EventGoAPI.Application.Features.Command.User.DeleteUser;
 using EventGoAPI.Application.Features.Command.User.UpdateUser;
+using EventGoAPI.Application.Features.Query.AdminData.GetAdminData;
 using EventGoAPI.Application.Features.Query.Notification;
 using EventGoAPI.Application.Features.Query.User.GetUsers;
 using MediatR;
@@ -34,6 +35,14 @@ namespace EventGoAPI.API.Controllers
         {
             GetUsersQueryResponse response = await _mediator.Send(getUsersQueryRequest);
             return ResponseHandler.CreateResponse(response);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetAdminData([FromQuery] GetAdminDataQueryRequest getAdminDataQueryRequest)
+        {
+            GetAdminDataQueryResponse response = await _mediator.Send(getAdminDataQueryRequest);
+            return Ok(response);
         }
 
         [HttpDelete]

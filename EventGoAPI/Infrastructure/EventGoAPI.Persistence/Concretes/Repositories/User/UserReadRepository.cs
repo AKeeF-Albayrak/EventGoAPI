@@ -34,5 +34,10 @@ namespace EventGoAPI.Persistence.Concretes.Repositories
         }
 
         public async Task<User> GetUserByUsernameAsync(string username) => await Table.SingleOrDefaultAsync(u => u.Username == username);
+
+        public async Task<int> GetUserCountAsync()
+        {
+            return await Table.CountAsync();
+        }
     }
 }

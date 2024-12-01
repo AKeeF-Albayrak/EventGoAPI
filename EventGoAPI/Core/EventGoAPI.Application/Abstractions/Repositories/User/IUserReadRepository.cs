@@ -13,5 +13,6 @@ namespace EventGoAPI.Application.Abstractions.Repositories
         Task<User> GetUserByUsernameAsync(string username);
         Task<User> CheckUserByUsernameEmailPhoneNumberAsync(string username, string email, string phoneNumber);
         Task<User> CheckLoginCredentials(string username, string password); 
+        Task<int> GetUserCountAsync();
     }
 }
